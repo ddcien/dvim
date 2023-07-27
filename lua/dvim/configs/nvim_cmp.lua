@@ -42,9 +42,13 @@ M.setup = function()
         sources = cmp.config.sources({
             { name = 'nvim_lsp' },
             { name = 'luasnip' },
+            { name = 'ultisnips' },
+
         }, {
             { name = 'buffer' },
             { name = "path" },
+            { name = "look" },
+            { name = 'calc' },
         }),
         mapping = cmp_mapping.preset.insert({
             ['<C-Space>'] = cmp.mapping.complete(),
@@ -62,7 +66,7 @@ M.setup = function()
                 end
 
                 vim_item.kind = kind_icons[vim_item.kind]
-                vim_item.menu = M.formatting.source_names[entry.source.name]
+                vim_item.menu = M.formatting.source_names[entry.source.name] or entry.source.name
                 vim_item.dup = M.formatting.duplicates[entry.source.name] or M.formatting.duplicates_default
                 return vim_item
             end,

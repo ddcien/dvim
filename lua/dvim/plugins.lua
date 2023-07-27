@@ -23,9 +23,7 @@ local core_plugins = {
         "j-hui/fidget.nvim",
         tag = "legacy",
         event = "LspAttach",
-        opts = {
-            -- options
-        },
+        opts = {},
     },
     {
         "p00f/clangd_extensions.nvim",
@@ -101,6 +99,8 @@ local core_plugins = {
         config = function()
             local telescope = require("telescope")
             local actions = require("telescope.actions")
+            local builtin = require("telescope.builtin")
+
             telescope.setup({
                 defaults = require("telescope.themes").get_dropdown({
                     dynamic_preview_title = true,
@@ -120,9 +120,9 @@ local core_plugins = {
                     },
                 },
             })
+
             telescope.load_extension("fzf")
 
-            local builtin = require('telescope.builtin')
             vim.api.nvim_create_user_command(
                 "Rg",
                 function(args)
@@ -134,6 +134,7 @@ local core_plugins = {
                 end,
                 { nargs = "?" }
             )
+            vim.keymap.set('n', '<c-p>', builtin.find_files, { noremap = true, silent = true })
         end
     },
     {
@@ -163,10 +164,16 @@ local core_plugins = {
         event = { "InsertEnter", "CmdlineEnter" },
         lazy = true,
     },
-    { "hrsh7th/cmp-nvim-lsp",     lazy = true },
-    { "hrsh7th/cmp-buffer",       lazy = true },
-    { "hrsh7th/cmp-path",         lazy = true },
-    { "saadparwaiz1/cmp_luasnip", lazy = true },
+    { "hrsh7th/cmp-nvim-lsp",                lazy = true },
+    { "hrsh7th/cmp-buffer",                  lazy = true },
+    { "hrsh7th/cmp-path",                    lazy = true },
+    { "saadparwaiz1/cmp_luasnip",            lazy = true },
+
+    { "hrsh7th/cmp-calc", },
+    { "octaltree/cmp-look" },
+    { 'quangnguyen30192/cmp-nvim-ultisnips', },
+    { "SirVer/ultisnips", },
+    { "honza/vim-snippets" },
     { "onsails/lspkind.nvim" },
     -------------------
     {
@@ -178,7 +185,6 @@ local core_plugins = {
     },
     {
         "rafamadriz/friendly-snippets",
-        lazy = true,
     },
     {
         'mbbill/undotree',
@@ -258,22 +264,19 @@ local core_plugins = {
     },
     {
         "nvim-tree/nvim-tree.lua",
-        opts = {
-            on_attach = function(bufnr)
-                local api = require('nvim-tree.api')
-                api.config.mappings.default_on_attach(bufnr)
-                vim.keymap.del('n', '<C-e>', { buffer = bufnr })
-            end
-        },
-        cmd = {
-            "NvimTreeToggle",
-            "NvimTreeOpen",
-        },
+        config = function()
+            require("nvim-tree").setup({
+                on_attach = function(bufnr)
+                    require('nvim-tree.api').config.mappings.default_on_attach(bufnr)
+                    vim.keymap.del('n', '<c-e>', { buffer = bufnr })
+                end
+            })
+            vim.keymap.set('n', '<c-e>', "<cmd>NvimTreeToggle<cr>", { noremap = true, silent = true })
+        end
     },
     {
         "lewis6991/gitsigns.nvim",
         opts = {
-
             on_attach = function(bufnr)
                 local gs = package.loaded.gitsigns
 
@@ -283,7 +286,6 @@ local core_plugins = {
                     vim.keymap.set(mode, l, r, opts)
                 end
 
-                -- Navigation
                 map('n', ']c',
                     function()
                         if vim.wo.diff then return ']c' end
@@ -294,16 +296,12 @@ local core_plugins = {
 
                 map('n', '[c',
                     function()
-                        if vim.wo.diff then
-                            return '[c'
-                        end
+                        if vim.wo.diff then return '[c' end
                         vim.schedule(function() gs.prev_hunk() end)
                         return '<Ignore>'
                     end,
                     { expr = true })
 
-                -- Actions
-                -- Text object
                 map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
             end
 
@@ -364,9 +362,7 @@ local core_plugins = {
     },
     {
         'ethanholz/nvim-lastplace',
-        config = function()
-            require('nvim-lastplace').setup()
-        end
+        opts = {}
     },
     {
         "andymass/vim-matchup",
@@ -376,14 +372,9 @@ local core_plugins = {
     },
     {
         "kylechui/nvim-surround",
-        version = "*", -- Use for stability; omit to use `main` branch for the latest features
+        version = "*",
         event = "VeryLazy",
-        config = function()
-            require("nvim-surround").setup()
-        end
-    },
-    {
-        "tpope/vim-repeat"
+        opts = {}
     },
     {
         'goolord/alpha-nvim',
@@ -393,11 +384,14 @@ local core_plugins = {
             require("alpha").setup(require('alpha.themes.startify').config)
         end
     },
+
+    { "tpope/vim-repeat" },
+    { "tpope/vim-fugitive" },
     { "kevinhwang91/nvim-bqf", ft = "qf" },
-    { "tpope/vim-fugitive",    cmd = "Git" },
-    { "folke/tokyonight.nvim", priority = 1000 },
+    { "folke/tokyonight.nvim", name = "tokyonight", priority = 1000 },
     { "dracula/vim",           name = "dracula",    priority = 1000 },
     { "catppuccin/nvim",       name = "catppuccin", priority = 1000 },
+
     { "gbprod/yanky.nvim",     opts = {} },
 }
 
