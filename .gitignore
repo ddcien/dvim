@@ -10,6 +10,8 @@ session
 wiki/
 pack/
 /dvim/
+nlsp-settings/
+lazy-lock.json
 utils/java/*
 lv-config.lua
 lua-language-server/
