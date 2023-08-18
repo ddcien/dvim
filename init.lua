@@ -1,5 +1,6 @@
 local utils = require("dvim.utils")
 require("dvim.settings").load_default_options()
+vim.g.c_syntax_for_h = 1
 
 local dvim_runtime_dir = utils.get_runtime_dir()
 
@@ -25,7 +26,8 @@ end
 vim.opt.rtp:prepend(dvim_plug_lazy_dir)
 
 require("lazy").setup(
-    require("dvim.plugins"),
+    -- require("dvim.plugins"),
+    require("dvim.plugins_duggee"),
     {
         root     = dvim_plugin_dir,
         lockfile = utils.join_paths(dvim_config_dir, "lazy-lock.json"),

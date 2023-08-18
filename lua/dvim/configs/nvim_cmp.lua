@@ -32,6 +32,7 @@ M.setup = function()
     cmp.setup({
         snippet = {
             expand = function(args)
+                print(vim.inspect(args))
                 luasnip.lsp_expand(args.body)
             end,
         },
