@@ -326,32 +326,7 @@ local core_plugins = {
         },
         event = "VimEnter",
     },
-    {
-        "lukas-reineke/indent-blankline.nvim",
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter",
-        },
-        opts = {
-            use_treesitter = true,
-            show_current_context = true,
-            show_current_context_start = true,
-            show_trailing_blankline_indent = false,
-            show_first_indent_level = true,
-            char = icons.ui.LineLeft,
-            context_char = icons.ui.LineLeft,
-            buftype_exclude = { "terminal", "nofile" },
-            filetype_exclude = {
-                "help",
-                "startify",
-                "dashboard",
-                "lazy",
-                "neogitstatus",
-                "NvimTree",
-                "Trouble",
-                "text",
-            }
-        }
-    },
+    { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
     {
         "folke/which-key.nvim",
         opts = {},

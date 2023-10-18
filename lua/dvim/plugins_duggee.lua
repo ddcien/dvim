@@ -60,60 +60,6 @@ local core_plugins = {
         lazy = true,
     },
 
-    {
-        "nvim-treesitter/nvim-treesitter",
-        config = function()
-            require('nvim-treesitter.configs').setup({
-                ensure_installed = {
-                    "bash",
-                    "c",
-                    "cpp",
-                    "cmake",
-                    "comment",
-                    "devicetree",
-                    "diff",
-                    "dockerfile",
-                    "gitcommit",
-                    "gitignore",
-                    "json",
-                    "lua",
-                    "make",
-                    "markdown",
-                    "python",
-                    "rust",
-                    "verilog",
-                    "vim",
-                    "yaml"
-                },
-                ignore_install = { "comment" },
-                sync_install = false,
-                auto_install = false,
-                matchup = {
-                    enable = true,
-                },
-                highlight = {
-                    enable = true,
-                    additional_vim_regex_highlighting = false,
-                },
-                indent = {
-                    enable = true,
-                    disable = { "yaml", "python" }
-                },
-                playground = {
-                    enable = true,
-                }
-            })
-        end,
-        cmd = {
-            "TSInstall",
-            "TSUninstall",
-            "TSUpdate",
-            "TSUpdateSync",
-            "TSInstallInfo",
-            "TSInstallSync",
-            "TSInstallFromGrammar",
-        },
-    },
 
 
 
@@ -139,7 +85,6 @@ local core_plugins = {
         opts = {},
         event = "InsertEnter",
         dependencies = {
-            "nvim-treesitter/nvim-treesitter",
         },
     },
 
@@ -205,32 +150,10 @@ local core_plugins = {
         },
         event = "VimEnter",
     },
-
     {
         "lukas-reineke/indent-blankline.nvim",
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter",
-        },
-        opts = {
-            use_treesitter = true,
-            show_current_context = true,
-            show_current_context_start = true,
-            show_trailing_blankline_indent = false,
-            show_first_indent_level = true,
-            char = icons.ui.LineLeft,
-            context_char = icons.ui.LineLeft,
-            buftype_exclude = { "terminal", "nofile" },
-            filetype_exclude = {
-                "help",
-                "startify",
-                "dashboard",
-                "lazy",
-                "neogitstatus",
-                "NvimTree",
-                "Trouble",
-                "text",
-            }
-        }
+        main = "ibl",
+        opts = {}
     },
     { 'numToStr/Comment.nvim',    opts = {} },
     { "folke/which-key.nvim",     opts = {} },
@@ -258,20 +181,14 @@ local core_plugins = {
     { "tpope/vim-repeat" },
     { "tpope/vim-fugitive" },
     { "kevinhwang91/nvim-bqf", ft = "qf" },
+    { "gbprod/yanky.nvim",     opts = {} },
+
     { "folke/tokyonight.nvim", name = "tokyonight", lazy = true, priority = 1000 },
     { "dracula/vim",           name = "dracula",    lazy = true, priority = 1000 },
     { "catppuccin/nvim",       name = "catppuccin", lazy = true, priority = 1000 },
-    { "gbprod/yanky.nvim",     opts = {} },
-
     ---------------------------
     {
         name = "duggee",
-        dev = true,
-        dir = '/home/ddcien/ddcien/duggee2/plugin_lua',
-    },
-    {
-        name = "duggdee",
-        dev = true,
         dir = '/home/ddcien/ddcien/duggee2/vim-plugin',
         config = function()
             local opts = { noremap = true, silent = true, }
@@ -301,6 +218,10 @@ local core_plugins = {
     },
     {
         'iamcco/markdown-preview.nvim'
+    },
+    {
+        'keaising/im-select.nvim',
+        opts = {}
     }
 }
 
