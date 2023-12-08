@@ -47,7 +47,8 @@ function M.load_default_options()
         ignorecase = false,
         swapfile = false,
         title = true,
-        wrap = false,
+        wrap = true,
+        linebreak = true,
         scrolloff = 8,
         sidescrolloff = 8,
         ruler = false,
@@ -59,7 +60,6 @@ function M.load_default_options()
     vim.opt.spelllang:append("cjk")
     vim.opt.shortmess:append("cI")
     vim.opt.whichwrap:append("<,>,[,],h,l")
-    vim.opt.fileencodings:prepend("gbk")
 
     for k, v in pairs(default_options) do
         vim.opt[k] = v
