@@ -7,15 +7,15 @@ function M.setup_ui()
         virtual_text = false,
         update_in_insert = false,
         underline = true,
-        severity_sort = false,
+        severity_sort = true,
         signs = true,
         float = {
             focusable = false,
             style = "minimal",
             border = "rounded",
             source = "always",
-            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
             scope = 'cursor',
+            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
         }
     })
 
@@ -51,7 +51,6 @@ function M.setup()
         group = vim.api.nvim_create_augroup('UserLspConfig', {}),
         callback = function(evt)
             vim.bo[evt.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-            local client = vim.lsp.get_client_by_id(evt.data.client_id)
             local opts = { noremap = true, silent = true, buffer = evt.buf }
             vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
             vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
@@ -60,13 +59,17 @@ function M.setup()
             vim.keymap.set('n', 'gi', telescope.lsp_implementations, opts)
             vim.keymap.set('n', 'gr', telescope.lsp_references, opts)
             vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
+            vim.keymap.set('i', '<C-K>', vim.lsp.buf.signature_help, opts)
             vim.keymap.set({ 'n', 'v' }, '<F3>', function() vim.lsp.buf.format { async = true } end, opts)
-            vim.keymap.set({ 'n', 'i' }, '<C-K>', vim.lsp.buf.signature_help, opts)
             vim.keymap.set({ 'n', 'v' }, '<F4>', vim.lsp.buf.code_action, opts)
             vim.keymap.set({ 'n', 'v' }, 'gf', function()
-                vim.lsp.buf.code_action({ apply = true, context = { only = { "quickfix" } } })
+                local x = vim.lsp.buf.code_action({ apply = true, context = { only = { "quickfix" } } })
+                print(vim.inspect(x))
+                local d = vim.diagnostic.get(evt.buf, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })
+                print(vim.inspect(d))
             end, opts)
 
+            local client = vim.lsp.get_client_by_id(evt.data.client_id)
             if client then
                 if client.server_capabilities.documentHighlightProvider then
                     vim.api.nvim_create_autocmd("CursorHold",
@@ -89,18 +92,12 @@ function M.setup()
         'cmake',
         'jsonls',
         'vimls',
+        'clangd',
+        'ruff_lsp',
     }) do
-        lspconfig[lsp].setup({
-            capabilities = capabilities,
-        })
+        lspconfig[lsp].setup({ capabilities = capabilities, })
     end
 
-    require("clangd_extensions").setup({
-        server = {
-            capabilities = capabilities,
-        }
-    })
-    require("rust-tools").setup({})
 
     lspconfig["lua_ls"].setup({
         capabilities = capabilities,

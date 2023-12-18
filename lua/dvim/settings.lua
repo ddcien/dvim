@@ -1,7 +1,7 @@
 local M = {}
 
 function M.load_default_options()
-    local utils = require "dvim.utils"
+    local utils = require("dvim.utils")
     local cache_dir = utils.get_cache_dir()
     local undodir = utils.join_paths(cache_dir, "undo")
     local shadafile = utils.join_paths(cache_dir, "dvim.shada")
@@ -64,6 +64,8 @@ function M.load_default_options()
     for k, v in pairs(default_options) do
         vim.opt[k] = v
     end
+
+    vim.g.c_syntax_for_h = 1
 end
 
 return M
