@@ -18,12 +18,17 @@ function M.load_default_options()
         softtabstop = 4,
         smarttab = true,
         smartindent = true,
-        textwidth = 80,
         colorcolumn = "+1",
-        foldlevel = 2,
         fileencoding = "utf-8",
         background = "dark",
 
+        ------
+        breakindent = true,
+        timeoutlen = 300,
+        splitright = true,
+        splitbelow = true,
+        list = true,
+        listchars = { tab = '» ', trail = '·', nbsp = '␣' },
         ------
         number = true,
         cursorline = true,
@@ -31,20 +36,21 @@ function M.load_default_options()
         tabstop = 4,
         expandtab = true,
         smartcase = true,
-        updatetime = 500, -- 400
+        updatetime = 250, --500, -- 400
         signcolumn = "yes",
         hidden = true,
         completeopt = { "menuone", "noinsert", "noselect" },
         termguicolors = true,
         undofile = true,
         laststatus = 3,
-        mouse = "", -- ""
+        mouse = "",
         showmode = false,
         showcmd = false,
         backup = false,
         writebackup = false,
         hlsearch = true,
-        ignorecase = false,
+        -- ignorecase = false,
+        ignorecase = true,
         swapfile = false,
         title = true,
         wrap = true,
@@ -52,9 +58,10 @@ function M.load_default_options()
         scrolloff = 8,
         sidescrolloff = 8,
         ruler = false,
-
+        fileencodings="utf-8,gbk",
         undodir = undodir,
         shadafile = shadafile,
+        foldlevel = 2,
     }
 
     vim.opt.spelllang:append("cjk")

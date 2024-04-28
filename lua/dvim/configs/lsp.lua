@@ -15,7 +15,13 @@ function M.setup_ui()
             border = "rounded",
             source = "always",
             scope = 'cursor',
-            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+            close_events = {
+                "BufLeave",
+                "CursorMoved",
+                "InsertEnter",
+                "FocusLost",
+                "TextChanged"
+            },
         }
     })
 
@@ -41,11 +47,46 @@ function M.setup()
 
     M.setup_ui()
 
-    vim.keymap.set('n', '<C-J>', vim.diagnostic.goto_next)
-    vim.keymap.set('n', '<C-K>', vim.diagnostic.goto_prev)
+    vim.keymap.set('n', '<C-J>', function()
+        vim.diagnostic.goto_next({
+            wrap = true,
+            float = {
+                focusable = false,
+                style = "minimal",
+                border = "rounded",
+                source = "always",
+                scope = 'cursor',
+                close_events = {
+                    "BufLeave",
+                    "CursorMoved",
+                    "InsertEnter",
+                    "FocusLost",
+                    "TextChanged"
+                },
+            }
+        })
+    end)
+    vim.keymap.set('n', '<C-k>', function()
+        vim.diagnostic.goto_prev({
+            wrap = true,
+            float = {
+                focusable = false,
+                style = "minimal",
+                border = "rounded",
+                source = "always",
+                scope = 'cursor',
+                close_events = {
+                    "BufLeave",
+                    "CursorMoved",
+                    "InsertEnter",
+                    "FocusLost",
+                    "TextChanged"
+                },
+            }
+        })
+    end)
 
     local telescope = require("telescope.builtin")
-    local navic = require("nvim-navic")
 
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('UserLspConfig', {}),
@@ -62,24 +103,22 @@ function M.setup()
             vim.keymap.set('i', '<C-K>', vim.lsp.buf.signature_help, opts)
             vim.keymap.set({ 'n', 'v' }, '<F3>', function() vim.lsp.buf.format { async = true } end, opts)
             vim.keymap.set({ 'n', 'v' }, '<F4>', vim.lsp.buf.code_action, opts)
+
             vim.keymap.set({ 'n', 'v' }, 'gf', function()
-                local x = vim.lsp.buf.code_action({ apply = true, context = { only = { "quickfix" } } })
-                print(vim.inspect(x))
-                local d = vim.diagnostic.get(evt.buf, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })
-                print(vim.inspect(d))
+                vim.lsp.buf.code_action({
+                    apply = true,
+                    context = {
+                        only = { "quickfix" },
+                    }
+                })
             end, opts)
 
             local client = vim.lsp.get_client_by_id(evt.data.client_id)
-            if client then
-                if client.server_capabilities.documentHighlightProvider then
-                    vim.api.nvim_create_autocmd("CursorHold",
-                        { buffer = evt.buf, callback = vim.lsp.buf.document_highlight })
-                    vim.api.nvim_create_autocmd("CursorMoved",
-                        { buffer = evt.buf, callback = vim.lsp.buf.clear_references })
-                end
-                if client.server_capabilities.documentSymbolProvider then
-                    navic.attach(client, evt.buf)
-                end
+            if client.server_capabilities.documentHighlightProvider then
+                vim.api.nvim_create_autocmd("CursorHold",
+                    { buffer = evt.buf, callback = vim.lsp.buf.document_highlight })
+                vim.api.nvim_create_autocmd("CursorMoved",
+                    { buffer = evt.buf, callback = vim.lsp.buf.clear_references })
             end
         end,
     })
