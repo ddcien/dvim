@@ -36,7 +36,7 @@ function M.load_default_options()
         tabstop = 4,
         expandtab = true,
         smartcase = true,
-        updatetime = 250, --500, -- 400
+        updatetime = 500, -- 400
         signcolumn = "yes",
         hidden = true,
         completeopt = { "menuone", "noinsert", "noselect" },
@@ -72,7 +72,7 @@ function M.load_default_options()
         vim.opt[k] = v
     end
 
-    vim.g.c_syntax_for_h = 1
+    vim.g.c_syntax_for_h = 0
 end
 
 return M

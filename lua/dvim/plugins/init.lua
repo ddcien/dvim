@@ -1,10 +1,10 @@
-local core_plugins = {
+local plugins = {
     -- // unitls
-    { "folke/lazy.nvim",             tag = "stable" },
-    { "nvim-lua/plenary.nvim",       lazy = true },
-    { "nvim-tree/nvim-web-devicons", lazy = true, },
-
-    { -- // telescope
+    { -- lazy.nvim
+        "folke/lazy.nvim",
+        tag = "stable"
+    },
+    { -- telescope
         "nvim-telescope/telescope.nvim",
         event = 'VimEnter',
         branch = "0.1.x",
@@ -66,7 +66,7 @@ local core_plugins = {
             })
         end,
     },
-    { -- // treesitter
+    { -- treesitter
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
         event = { "VeryLazy" },
@@ -112,16 +112,13 @@ local core_plugins = {
             require("nvim-treesitter.configs").setup(opts)
         end,
     },
-    { 'HiPhish/rainbow-delimiters.nvim', },
-    { 'mbbill/undotree',                 cmd = "UndotreeToggle" },
-    -- { "SirVer/ultisnips", },
-    { "honza/vim-snippets" },
-    { name = "ddvim-snippets",           dir = '/home/ddcien/WORK/ddvim-snippets' },
-    { "rafamadriz/friendly-snippets" },
-    { 'numToStr/Comment.nvim',           opts = {} },
-    { "folke/which-key.nvim",            opts = {} },
-    { 'ethanholz/nvim-lastplace',        opts = {} },
-    {
+    { -- rainbow-delimiters.nvim
+        'HiPhish/rainbow-delimiters.nvim',
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+        }
+    },
+    { -- nvim-tree.lua
         "nvim-tree/nvim-tree.lua",
         config = function()
             require("nvim-tree").setup({
@@ -133,7 +130,7 @@ local core_plugins = {
             vim.keymap.set('n', '<c-e>', "<cmd>NvimTreeToggle<cr>", { noremap = true, silent = true })
         end
     },
-    {
+    { -- gitsigns.nvim
         "lewis6991/gitsigns.nvim",
         opts = {
             on_attach = function(bufnr)
@@ -166,7 +163,18 @@ local core_plugins = {
 
         },
     },
-    {
+    { -- colors
+        { "folke/tokyonight.nvim", name = "tokyonight", priority = 1000 },
+        { "dracula/vim",           name = "dracula",    priority = 1000 },
+        { "catppuccin/nvim",       name = "catppuccin", priority = 1000 },
+    },
+    { -- snippets
+        -- { "SirVer/ultisnips", },
+        -- { "honza/vim-snippets" },
+        -- { name = "ddvim-snippets",       dir = '/home/ddcien/WORK/ddvim-snippets' },
+        -- { "rafamadriz/friendly-snippets" },
+    },
+    { -- status line
         "nvim-lualine/lualine.nvim",
         opts = {},
         event = "VimEnter",
@@ -178,16 +186,14 @@ local core_plugins = {
     },
     { "tpope/vim-repeat" },
     { "tpope/vim-fugitive" },
-    { "kevinhwang91/nvim-bqf", ft = "qf" },
-    { "gbprod/yanky.nvim",     opts = {} },
-    { "folke/tokyonight.nvim", name = "tokyonight", priority = 1000 },
-    { "dracula/vim",           name = "dracula",    priority = 1000 },
-    { "catppuccin/nvim",       name = "catppuccin", priority = 1000 },
+    { "kevinhwang91/nvim-bqf",    ft = "qf" },
+    { "gbprod/yanky.nvim",        opts = {} },
+    { 'numToStr/Comment.nvim',    opts = {} },
+    { "folke/which-key.nvim",     opts = {} },
+    { 'ethanholz/nvim-lastplace', opts = {} },
     {
         "andymass/vim-matchup",
-        init = function()
-            vim.g.matchup_matchparen_offscreen = { method = "popup" }
-        end,
+        init = function() vim.g.matchup_matchparen_offscreen = { method = "popup" } end,
     },
     {
         "kylechui/nvim-surround",
@@ -230,25 +236,18 @@ local core_plugins = {
     {
         'godlygeek/tabular'
     },
-    {
-        'SirVer/ultisnips',
-    },
-
-    {
-        'kevinhwang91/nvim-ufo',
-        dependencies = { 'kevinhwang91/promise-async', },
-        config = function(_, opts)
-            vim.o.foldcolumn = '0' -- '0' is not bad
-            vim.o.foldlevel = 99   -- Using ufo provider need a large value, feel free to decrease the value
-            vim.o.foldlevelstart = 99
-            vim.o.foldenable = true
-            require('ufo').setup({
-                provider_selector = function(bufnr, filetype, buftype)
-                    return { 'treesitter', 'indent' }
-                end
-            })
-        end,
-    }
+    { 'mbbill/undotree', cmd = "UndotreeToggle" },
 }
 
-return core_plugins
+local M = {}
+
+function M.get_plugins(opts)
+    opts = opts or {}
+    if opts.use_native_lsp then
+        table.insert(plugins, require("dvim.plugins.nativlsp"))
+        table.insert(plugins, require("dvim.plugins.cmp"))
+    end
+    return plugins
+end
+
+return M
