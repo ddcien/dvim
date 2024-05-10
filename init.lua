@@ -34,7 +34,7 @@ end
 vim.opt.rtp:prepend(dvim_plug_lazy_dir)
 
 require("lazy").setup({
-    spec     = require("dvim.plugins").get_plugins({ use_native_lsp = false }),
+    spec     = require("dvim.plugins").get_plugins({ use_native_lsp = true }),
     root     = dvim_plugin_dir,
     lockfile = utils.join_paths(dvim_config_dir, "lazy-lock.json"),
     state    = utils.join_paths(dvim_state_dir, "lazy", "state.json"),

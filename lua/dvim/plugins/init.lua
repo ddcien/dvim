@@ -176,22 +176,19 @@ local plugins = {
             dependencies = {
                 "rafamadriz/friendly-snippets",
                 "honza/vim-snippets",
-                { name = "ddvim-snippets", dir = '/home/ddcien/WORK/ddvim-snippets' },
             },
             config = function()
                 require("luasnip.loaders.from_vscode").lazy_load()
                 require("luasnip.loaders.from_snipmate").lazy_load()
             end
         },
-
+        {
+            "SirVer/ultisnips",
+            dependencies = {
+                { name = "ddvim-snippets", dir = '/home/ddcien/WORK/ddvim-snippets' },
+            }
+        }
     },
-
-    -- { -- snippets
-    --     -- { "SirVer/ultisnips", },
-    --     -- { "honza/vim-snippets" },
-    --     -- { "rafamadriz/friendly-snippets" },
-    -- },
-
     { -- status line
         "nvim-lualine/lualine.nvim",
         opts = {},
