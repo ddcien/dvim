@@ -33,22 +33,17 @@ if not utils.is_directory(dvim_plug_lazy_dir) then
 end
 vim.opt.rtp:prepend(dvim_plug_lazy_dir)
 
-require("lazy").setup(
-    {
-        spec     = require("dvim.plugins").get_plugins({use_native_lsp=true}),
-        root     = dvim_plugin_dir,
-        lockfile = utils.join_paths(dvim_config_dir, "lazy-lock.json"),
-        state    = utils.join_paths(dvim_state_dir, "lazy", "state.json"),
-        readme   = { enabled = false, },
-    })
+require("lazy").setup({
+    spec     = require("dvim.plugins").get_plugins({ use_native_lsp = false }),
+    root     = dvim_plugin_dir,
+    lockfile = utils.join_paths(dvim_config_dir, "lazy-lock.json"),
+    state    = utils.join_paths(dvim_state_dir, "lazy", "state.json"),
+    readme   = { enabled = false, },
+})
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
 vim.cmd [[colorscheme tokyonight]]
-
--- vim.g.UltiSnipsExpandTrigger = "<tab>"
--- vim.g.UltiSnipsJumpForwardTrigger = "<c-b>"
--- vim.g.UltiSnipsJumpBackwardTrigger = "<c-z>"
 
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
     pattern = { "*.lds" },

@@ -169,11 +169,29 @@ local plugins = {
         { "catppuccin/nvim",       name = "catppuccin", priority = 1000 },
     },
     { -- snippets
-        -- { "SirVer/ultisnips", },
-        -- { "honza/vim-snippets" },
-        -- { name = "ddvim-snippets",       dir = '/home/ddcien/WORK/ddvim-snippets' },
-        -- { "rafamadriz/friendly-snippets" },
+        {
+            "L3MON4D3/LuaSnip",
+            version = "v2.*",
+            build = "make install_jsregexp",
+            dependencies = {
+                "rafamadriz/friendly-snippets",
+                "honza/vim-snippets",
+                { name = "ddvim-snippets", dir = '/home/ddcien/WORK/ddvim-snippets' },
+            },
+            config = function()
+                require("luasnip.loaders.from_vscode").lazy_load()
+                require("luasnip.loaders.from_snipmate").lazy_load()
+            end
+        },
+
     },
+
+    -- { -- snippets
+    --     -- { "SirVer/ultisnips", },
+    --     -- { "honza/vim-snippets" },
+    --     -- { "rafamadriz/friendly-snippets" },
+    -- },
+
     { -- status line
         "nvim-lualine/lualine.nvim",
         opts = {},
@@ -228,15 +246,9 @@ local plugins = {
             }
         end,
     },
-    {
-        "windwp/nvim-autopairs",
-        event = "InsertEnter",
-        opts = {},
-    },
-    {
-        'godlygeek/tabular'
-    },
-    { 'mbbill/undotree', cmd = "UndotreeToggle" },
+    { "windwp/nvim-autopairs", event = "InsertEnter", opts = {}, },
+    { 'godlygeek/tabular' },
+    { 'mbbill/undotree',       cmd = "UndotreeToggle" },
 }
 
 local M = {}
@@ -244,9 +256,12 @@ local M = {}
 function M.get_plugins(opts)
     opts = opts or {}
     if opts.use_native_lsp then
-        table.insert(plugins, require("dvim.plugins.nativlsp"))
+        table.insert(plugins, require("dvim.plugins.lsp"))
         table.insert(plugins, require("dvim.plugins.cmp"))
+    else
+        table.insert(plugins, require("dvim.plugins.duggee"))
     end
+
     return plugins
 end
 

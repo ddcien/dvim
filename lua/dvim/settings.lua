@@ -58,7 +58,7 @@ function M.load_default_options()
         scrolloff = 8,
         sidescrolloff = 8,
         ruler = false,
-        fileencodings="utf-8,gbk",
+        fileencodings = "utf-8,gbk",
         undodir = undodir,
         shadafile = shadafile,
         foldlevel = 2,

@@ -1,51 +1,111 @@
+local icons = require("dvim.icons")
+local kind_icons = icons.kind
+
+local opt = {
+    formatting = {
+        source_names = {},
+    }
+}
+
 return {
-    'hrsh7th/nvim-cmp',
+    name = 'nvim-cmp',
+    dir = "/work/ddcien/nvim-cmp",
+    -- dev = true,
     dependencies = {
         'hrsh7th/cmp-nvim-lsp',
         'saadparwaiz1/cmp_luasnip',
-        'L3MON4D3/LuaSnip',
+        'hrsh7th/cmp-buffer',
+        'hrsh7th/cmp-path',
     },
     config = function()
-        local cmp = require('cmp')
-        local luasnip = require('luasnip')
+        local cmp = require("cmp")
+        local luasnip = require("luasnip")
 
-        cmp.setup {
+        cmp.setup({
             snippet = {
                 expand = function(args)
+                    -- vim.snippet.expand(args.body)
                     luasnip.lsp_expand(args.body)
                 end,
             },
-
-
             mapping = cmp.mapping.preset.insert({
-                ['<C-u>'] = cmp.mapping.scroll_docs(-4), -- Up
-                ['<C-d>'] = cmp.mapping.scroll_docs(4),  -- Down
-                -- C-b (back) C-f (forward) for snippet placeholder navigation.
-                ['<C-Space>'] = cmp.mapping.complete(),
-                ['<CR>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true, }),
-                ['<Tab>'] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_next_item()
-                    elseif luasnip.expand_or_jumpable() then
+                -- ['<c-Space>'] = cmp.mapping.complete(),
+                -- ['<CR>'] = cmp.mapping.confirm({ select = false }),
+                ["<Tab>"] = cmp.mapping(function(fallback)
+                    if luasnip.expand_or_locally_jumpable() then
                         luasnip.expand_or_jump()
+                    elseif cmp.visible() then
+                        cmp.select_next_item()
                     else
                         fallback()
                     end
-                end, { 'i', 's' }),
-                ['<S-Tab>'] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_prev_item()
-                    elseif luasnip.jumpable(-1) then
+                end, { "i", "s" }),
+                ["<S-Tab>"] = cmp.mapping(function(fallback)
+                    if luasnip.jumpable(-1) then
                         luasnip.jump(-1)
+                    elseif cmp.visible() then
+                        cmp.select_prev_item()
                     else
                         fallback()
                     end
-                end, { 'i', 's' }),
+                end, { "i", "s" }),
             }),
-            sources = {
+            sources = cmp.config.sources({
+                { name = 'luasnip', },
                 { name = 'nvim_lsp' },
-                { name = 'luasnip' }
+            }, {
+                { name = 'buffer' },
+                { name = 'path' },
+            }),
+            matching = {
+                disallow_fuzzy_matching = false, -- fmodify -> fnamemodify
+                disallow_fullfuzzy_matching = true,
+                disallow_partial_fuzzy_matching = true,
+                disallow_partial_matching = false, -- fb -> foo_bar
+                disallow_prefix_unmatching = true, -- bar -> foo_bar
             },
-        }
-    end
+            confirm_opts = {
+                behavior = cmp.ConfirmBehavior.Replace,
+                select = false,
+            },
+            experimental = {
+                ghost_text = false,
+            },
+            -- view = { entries = { name = "native", }, },
+            performance = {
+                debounce = 50,
+                throttle = 20,
+                confirm_resolve_timeout = 50,
+                async_budget = 1,
+                fetching_timeout = 200,
+                max_view_entries = 50,
+            },
+            completion = {
+                autocomplete = {
+                    'InsertEnter',
+                    'TextChanged'
+                },
+                keyword_length = 1,
+            },
+            -- window = {
+            --     completion = cmp.config.window.bordered(),
+            --     documentation = cmp.config.window.bordered(),
+            -- },
+            formatting = {
+                expandable_indicator = true,
+                fields = { "kind", "abbr", "menu" },
+                format = function(entry, vim_item)
+                    -- kind
+                    vim_item.kind = kind_icons[vim_item.kind]
+                    -- menu
+                    if entry.source.name == "nvim_lsp" then
+                        vim_item.menu = entry.source.source.client.name
+                    else
+                        vim_item.menu = opt.formatting.source_names[entry.source.name] or entry.source.name
+                    end
+                    return vim_item
+                end,
+            },
+        })
+    end,
 }
