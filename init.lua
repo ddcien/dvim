@@ -48,6 +48,6 @@ vim.cmd [[colorscheme tokyonight]]
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
     pattern = { "*.lds" },
     callback = function(ev)
-        vim.api.nvim_buf_set_option(ev.buf, "filetype", "ld")
+        vim.api.nvim_set_option_value("filetype", "ld", { buf = ev.buf })
     end
 })

@@ -85,6 +85,7 @@ return {
                 ghost_text = false,
             },
             -- view = { entries = { name = "native", }, },
+            preselect = cmp.PreselectMode.None,
             performance = {
                 debounce = 50,
                 throttle = 20,

@@ -67,6 +67,10 @@ end
 local function config_lsp_servers()
     local default_capabilities = {
         textDocument = {
+            foldingRange = {
+                lineFoldingOnly = true,
+                dynamicRegistration = false,
+            },
             completion = {
                 completionItem = {
                     commitCharactersSupport = true,
@@ -78,7 +82,17 @@ local function config_lsp_servers()
                     labelDetailsSupport = true,
                     preselectSupport = true,
                     resolveSupport = {
-                        properties = { "documentation", "detail", "additionalTextEdits", "sortText", "filterText", "insertText", "textEdit", "insertTextFormat", "insertTextMode" }
+                        properties = {
+                            "documentation",
+                            "detail",
+                            "additionalTextEdits",
+                            "sortText",
+                            "filterText",
+                            "insertText",
+                            "textEdit",
+                            "insertTextFormat",
+                            "insertTextMode",
+                        }
                     },
                     snippetSupport = true,
                     tagSupport = {
@@ -86,7 +100,13 @@ local function config_lsp_servers()
                     }
                 },
                 completionList = {
-                    itemDefaults = { "commitCharacters", "editRange", "insertTextFormat", "insertTextMode", "data" }
+                    itemDefaults = {
+                        "commitCharacters",
+                        "editRange",
+                        "insertTextFormat",
+                        "insertTextMode",
+                        "data",
+                    }
                 },
                 contextSupport = true,
                 dynamicRegistration = false,
@@ -97,49 +117,57 @@ local function config_lsp_servers()
 
     local lspconfig = require('lspconfig')
 
-    lspconfig["lua_ls"].setup({
-        capabilities = default_capabilities,
-        settings = {
-            Lua = {
-                diagnostics = {
-                    globals = {
-                        "vim",
-                    },
-                },
-                telemetry = {
-                    enable = false
-                }
-            }
-        },
-    })
     for _, lsp in ipairs({
-        'pyright',
+        'basedpyright',
         'cmake',
         'jsonls',
         'vimls',
         'clangd',
-        'ruff_lsp',
-        'rust_analyzer'
+        'ruff',
+        'jsonls',
+        'lua_ls',
+        -- 'rust_analyzer'
     }) do
         lspconfig[lsp].setup({ capabilities = default_capabilities, })
     end
 end
 
-
 return {
     "neovim/nvim-lspconfig",
     dependencies = {
         "nvim-telescope/telescope.nvim",
-
-        { "j-hui/fidget.nvim", opts = {}, },
+        "tamago324/nlsp-settings.nvim",
+        { "j-hui/fidget.nvim",   opts = {}, },
+        { "folke/neodev.nvim",   opts = {} },
+        { 'mrcjkb/rustaceanvim', version = '^4', lazy = false, },
         {
             "SmiteshP/nvim-navbuddy",
             dependencies = {
-                { "SmiteshP/nvim-navic",  opts = {}, },
                 { "MunifTanjim/nui.nvim", },
+                { "SmiteshP/nvim-navic",  opts = {}, },
             },
             opts = { lsp = { auto_attach = true } }
         },
+        {
+            'kevinhwang91/nvim-ufo',
+            dependencies = 'kevinhwang91/promise-async',
+            config = function()
+                local ufo = require('ufo')
+                vim.o.foldcolumn = '0'
+                vim.o.foldlevel = 99
+                vim.o.foldlevelstart = 99
+                vim.o.foldenable = true
+                ufo.setup()
+                vim.keymap.set('n', 'zR', ufo.openAllFolds)
+                vim.keymap.set('n', 'zM', ufo.closeAllFolds)
+            end
+        },
+        {
+            "ray-x/lsp_signature.nvim",
+            event = "VeryLazy",
+            opts = {},
+            -- config = function(_, opts) require 'lsp_signature'.setup(opts) end
+        }
     },
     config = function()
         config_ui()

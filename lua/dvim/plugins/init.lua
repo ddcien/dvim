@@ -232,6 +232,14 @@ local plugins = {
         end
     },
     {
+        "hedyhli/outline.nvim",
+        opts = {
+            keymaps= {
+                close = {}
+            }
+        },
+    },
+    {
         'iamcco/markdown-preview.nvim',
         cmd = { "MarkdownPreview" },
         ft = { "markdown" },
