@@ -9,7 +9,7 @@ local function config_ui()
             focusable = false,
             style = "minimal",
             border = "rounded",
-            source = "always",
+            source = "if_many",
             scope = 'cursor',
             close_events = {
                 "BufLeave",
@@ -20,13 +20,6 @@ local function config_ui()
             }
         }
     })
-
-    local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-    vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
-        opts = opts or {}
-        opts.border = opts.border or "rounded"
-        return orig_util_open_floating_preview(contents, syntax, opts, ...)
-    end
 end
 
 local function config_lsp_mappings()
@@ -38,8 +31,8 @@ local function config_lsp_mappings()
                 vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = evt.buf })
             end
             vim.bo[evt.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-            _buf_keymap_set('n', '<C-J>', vim.diagnostic.goto_next)
-            _buf_keymap_set('n', '<C-K>', vim.diagnostic.goto_prev)
+            _buf_keymap_set('n', '<C-J>', function() vim.diagnostic.jump({ count = 1, float = true }) end)
+            _buf_keymap_set('n', '<C-K>', function() vim.diagnostic.jump({ count = -1, float = true }) end)
             _buf_keymap_set('n', 'K', vim.lsp.buf.hover)
             _buf_keymap_set('n', 'gD', vim.lsp.buf.declaration)
             _buf_keymap_set('n', 'gd', telescope.lsp_definitions)
@@ -54,7 +47,7 @@ local function config_lsp_mappings()
                 function() vim.lsp.buf.code_action({ apply = true, context = { only = { "quickfix" }, } }) end)
 
             local client = vim.lsp.get_client_by_id(evt.data.client_id)
-            if client.server_capabilities.documentHighlightProvider then
+            if client and client.server_capabilities.documentHighlightProvider then
                 vim.api.nvim_create_autocmd("CursorHold",
                     { buffer = evt.buf, callback = vim.lsp.buf.document_highlight })
                 vim.api.nvim_create_autocmd("CursorMoved",
@@ -126,6 +119,7 @@ local function config_lsp_servers()
         'ruff',
         'jsonls',
         'lua_ls',
+        -- 'omnisharp',
         -- 'rust_analyzer'
     }) do
         lspconfig[lsp].setup({ capabilities = default_capabilities, })
@@ -162,12 +156,6 @@ return {
                 vim.keymap.set('n', 'zM', ufo.closeAllFolds)
             end
         },
-        {
-            "ray-x/lsp_signature.nvim",
-            event = "VeryLazy",
-            opts = {},
-            -- config = function(_, opts) require 'lsp_signature'.setup(opts) end
-        }
     },
     config = function()
         config_ui()
