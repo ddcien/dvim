@@ -84,7 +84,7 @@ local plugins = {
                 highlight = { enable = true },
                 indent = { enable = true },
                 matchup = {
-                    enable = true,
+                    enable = false,
                     disable = { "c", "cpp" },
                 },
                 incremental_selection = {
@@ -191,8 +191,37 @@ local plugins = {
     },
     { -- status line
         "nvim-lualine/lualine.nvim",
-        opts = {},
         event = "VimEnter",
+        opts = {
+            sections = {
+                lualine_x = {
+                        function()
+                            local status, serverstatus = require("neocodeium").get_status()
+
+                            -- Tables to map serverstatus and status to corresponding symbols
+                            local server_status_symbols = {
+                                [0] = "󰣺 ", -- Connected
+                                [1] = "󰣻 ", -- Connection Error
+                                [2] = "󰣽 ", -- Disconnected
+                            }
+
+                            local status_symbols = {
+                                [0] = "󰚩 ", -- Enabled
+                                [1] = "󱚧 ", -- Disabled Globally
+                                [3] = "󱚢 ", -- Disabled for Buffer filetype
+                                [5] = "󱚠 ", -- Disabled for Buffer encoding
+                                [2] = "󱙻 ", -- Disabled for Buffer (catch-all)
+                            }
+
+                            -- Handle serverstatus and status fallback (safeguard against any unexpected value)
+                            local luacodeium = server_status_symbols[serverstatus] or "󰣼 "
+                            luacodeium = luacodeium .. (status_symbols[status] or "󱚧 ")
+
+                            return luacodeium
+                        end,
+                    'encoding', 'fileformat', 'filetype'}
+            }
+        },
     },
     {
         "lukas-reineke/indent-blankline.nvim",
@@ -206,10 +235,6 @@ local plugins = {
     { 'numToStr/Comment.nvim',    opts = {} },
     { "folke/which-key.nvim",     opts = {} },
     { 'ethanholz/nvim-lastplace', opts = {} },
-    {
-        "andymass/vim-matchup",
-        init = function() vim.g.matchup_matchparen_offscreen = { method = "popup" } end,
-    },
     {
         "kylechui/nvim-surround",
         version = "*",
@@ -254,6 +279,22 @@ local plugins = {
     { "windwp/nvim-autopairs", event = "InsertEnter", opts = {}, },
     { 'godlygeek/tabular' },
     { 'mbbill/undotree',       cmd = "UndotreeToggle" },
+    {'sindrets/diffview.nvim'},
+    {
+        "monkoose/neocodeium",
+        enabled = false,
+        event = "VeryLazy",
+        config = function()
+            local neocodeium = require("neocodeium")
+            neocodeium.setup()
+            vim.keymap.set("i", "<A-f>", neocodeium.accept)
+            vim.keymap.set("i", "<A-w>", neocodeium.accept_word)
+            vim.keymap.set("i", "<A-a>", neocodeium.accept_line)
+            vim.keymap.set("i", "<A-e>", neocodeium.cycle_or_complete)
+            vim.keymap.set("i", "<A-r>", function() neocodeium.cycle_or_complete(-1) end)
+            vim.keymap.set("i", "<A-c>", neocodeium.clear)
+        end,
+    }
 }
 
 local M = {}
@@ -266,6 +307,7 @@ function M.get_plugins(opts)
     else
         table.insert(plugins, require("dvim.plugins.duggee"))
     end
+    table.insert(plugins, require("dvim.plugins.dap"))
 
     return plugins
 end
