@@ -28,7 +28,7 @@ function M.load_default_options()
         splitright = true,
         splitbelow = true,
         list = true,
-        listchars = { tab = '» ', trail = '·', nbsp = '␣' },
+        listchars = { tab = '» ', trail = '·', nbsp = '␣', eol = '' },
         ------
         number = true,
         cursorline = true,
@@ -49,7 +49,6 @@ function M.load_default_options()
         backup = false,
         writebackup = false,
         hlsearch = true,
-        -- ignorecase = false,
         ignorecase = true,
         swapfile = false,
         title = true,
