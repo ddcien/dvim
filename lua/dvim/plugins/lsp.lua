@@ -59,6 +59,7 @@ end
 
 local function config_lsp_servers()
     local default_capabilities = {
+        offsetEncoding = { 'utf-16' },
         textDocument = {
             foldingRange = {
                 lineFoldingOnly = true,
@@ -109,18 +110,17 @@ local function config_lsp_servers()
     }
 
     local lspconfig = require('lspconfig')
-
     for _, lsp in ipairs({
-        'basedpyright',
-        'cmake',
-        'jsonls',
-        'vimls',
-        'clangd',
-        'ruff',
-        'jsonls',
-        'lua_ls',
+        'clangd',        -- 'c', 'cpp'
+        'basedpyright',  -- 'python'
+        'ruff',          -- 'python'
+        'rust_analyzer', -- 'rust'
+        'neocmake',      -- 'cmake'
+        'lua_ls',        -- 'lua'
+        'marksman',      -- 'markdown'
+        -- 'vimls',
+        -- 'markdown_oxide',
         -- 'omnisharp',
-        -- 'rust_analyzer'
     }) do
         lspconfig[lsp].setup({ capabilities = default_capabilities, })
     end

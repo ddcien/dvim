@@ -7,7 +7,6 @@ local plugins = {
     { -- telescope
         "nvim-telescope/telescope.nvim",
         event = 'VimEnter',
-        branch = "0.1.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
             'nvim-telescope/telescope-ui-select.nvim',
@@ -189,112 +188,151 @@ local plugins = {
             }
         }
     },
+    { -- markdown
+        {
+            'iamcco/markdown-preview.nvim',
+            cmd = { "MarkdownPreview" },
+            ft = { "markdown" },
+            build = function() vim.fn["mkdp#util#install"]() end,
+            init = function()
+                vim.g.mkdp_filetypes = { "markdown" }
+                vim.g.mkdp_preview_options = {
+                    disable_filename = true
+                }
+            end,
+        },
+        {
+            "HakonHarnes/img-clip.nvim",
+            event = "VeryLazy",
+            ft = { "markdown" },
+            opts = {
+                -- recommended settings
+                default = {
+                    embed_image_as_base64 = false,
+                    prompt_for_file_name = false,
+                    drag_and_drop = {
+                        insert_mode = true,
+                    },
+                    -- required for Windows users
+                    use_absolute_path = true,
+                },
+            },
+        },
+    },
+    { -- misc
+        { "tpope/vim-repeat" },
+        {
+            "lukas-reineke/indent-blankline.nvim",
+            main = "ibl",
+            opts = {}
+        },
+        {
+            "NeogitOrg/neogit",
+            dependencies = {
+                "nvim-lua/plenary.nvim",
+                "sindrets/diffview.nvim",
+                "nvim-telescope/telescope.nvim",
+            },
+            config = true
+        },
+        { "tpope/vim-fugitive" },
+        { "kevinhwang91/nvim-bqf",    ft = "qf" },
+        { "gbprod/yanky.nvim",        opts = {} },
+        { 'numToStr/Comment.nvim',    opts = {} },
+        { "folke/which-key.nvim",     opts = {} },
+        { 'ethanholz/nvim-lastplace', opts = {} },
+        {
+            "kylechui/nvim-surround",
+            version = "*",
+            event = "VeryLazy",
+            opts = {}
+        },
+        {
+            'goolord/alpha-nvim',
+            event = "VimEnter",
+            dependencies = { 'nvim-tree/nvim-web-devicons' },
+            opts = function()
+                return require('alpha.themes.startify').config
+            end
+        },
+        {
+            'majutsushi/tagbar',
+            cmd = 'TagbarToggle',
+            config = function()
+                vim.g.tagbar_sort = 0
+            end
+        },
+        { "windwp/nvim-autopairs", event = "InsertEnter", opts = {}, },
+        { 'godlygeek/tabular' },
+        { 'mbbill/undotree',       cmd = "UndotreeToggle" },
+        { 'sindrets/diffview.nvim' },
+
+        { "windwp/nvim-autopairs", event = "InsertEnter", opts = {}, },
+        { 'godlygeek/tabular' },
+        { 'mbbill/undotree',       cmd = "UndotreeToggle" },
+        { 'sindrets/diffview.nvim' },
+    },
     { -- status line
         "nvim-lualine/lualine.nvim",
         event = "VimEnter",
         opts = {
             sections = {
                 lualine_x = {
-                        function()
-                            local status, serverstatus = require("neocodeium").get_status()
+                    function()
+                        local status, serverstatus = require("neocodeium").get_status()
 
-                            -- Tables to map serverstatus and status to corresponding symbols
-                            local server_status_symbols = {
-                                [0] = "󰣺 ", -- Connected
-                                [1] = "󰣻 ", -- Connection Error
-                                [2] = "󰣽 ", -- Disconnected
-                            }
+                        -- Tables to map serverstatus and status to corresponding symbols
+                        local server_status_symbols = {
+                            [0] = "󰣺 ", -- Connected
+                            [1] = "󰣻 ", -- Connection Error
+                            [2] = "󰣽 ", -- Disconnected
+                        }
 
-                            local status_symbols = {
-                                [0] = "󰚩 ", -- Enabled
-                                [1] = "󱚧 ", -- Disabled Globally
-                                [3] = "󱚢 ", -- Disabled for Buffer filetype
-                                [5] = "󱚠 ", -- Disabled for Buffer encoding
-                                [2] = "󱙻 ", -- Disabled for Buffer (catch-all)
-                            }
+                        local status_symbols = {
+                            [0] = "󰚩 ", -- Enabled
+                            [1] = "󱚧 ", -- Disabled Globally
+                            [2] = "󱙻 ", -- Disabled for Buffer (catch-all)
+                            [3] = "󱚢 ", -- Disabled for Buffer filetype
+                            [5] = "󱚠 ", -- Disabled for Buffer encoding
+                        }
 
-                            -- Handle serverstatus and status fallback (safeguard against any unexpected value)
-                            local luacodeium = server_status_symbols[serverstatus] or "󰣼 "
-                            luacodeium = luacodeium .. (status_symbols[status] or "󱚧 ")
+                        -- Handle serverstatus and status fallback (safeguard against any unexpected value)
+                        local luacodeium = server_status_symbols[serverstatus] or "󰣼 "
+                        luacodeium = luacodeium .. (status_symbols[status] or "󱚧 ")
 
-                            return luacodeium
-                        end,
-                    'encoding', 'fileformat', 'filetype'}
+                        return luacodeium
+                    end,
+                    'encoding', 'fileformat', 'filetype' }
             }
         },
     },
-    {
-        "lukas-reineke/indent-blankline.nvim",
-        main = "ibl",
-        opts = {}
-    },
-    { "tpope/vim-repeat" },
-    { "tpope/vim-fugitive" },
-    { "kevinhwang91/nvim-bqf",    ft = "qf" },
-    { "gbprod/yanky.nvim",        opts = {} },
-    { 'numToStr/Comment.nvim',    opts = {} },
-    { "folke/which-key.nvim",     opts = {} },
-    { 'ethanholz/nvim-lastplace', opts = {} },
-    {
-        "kylechui/nvim-surround",
-        version = "*",
-        event = "VeryLazy",
-        opts = {}
-    },
-    {
-        'goolord/alpha-nvim',
-        event = "VimEnter",
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
-        opts = function()
-            return require('alpha.themes.startify').config
-        end
-    },
-    {
-        'majutsushi/tagbar',
-        cmd = 'TagbarToggle',
-        config = function()
-            vim.g.tagbar_sort = 0
-        end
-    },
+
     {
         "hedyhli/outline.nvim",
         opts = {
-            keymaps= {
+            keymaps = {
                 close = {}
             }
         },
     },
     {
-        'iamcco/markdown-preview.nvim',
-        cmd = { "MarkdownPreview" },
-        ft = { "markdown" },
-        build = function() vim.fn["mkdp#util#install"]() end,
-        init = function()
-            vim.g.mkdp_filetypes = { "markdown" }
-            vim.g.mkdp_preview_options = {
-                disable_filename = true
-            }
+        "nvimtools/none-ls.nvim",
+        enabled = false,
+        opts = function(_, opts)
+            local nls = require("null-ls")
+            opts.sources = opts.sources or {}
+            table.insert(opts.sources, nls.builtins.formatting.prettier)
         end,
     },
-    { "windwp/nvim-autopairs", event = "InsertEnter", opts = {}, },
-    { 'godlygeek/tabular' },
-    { 'mbbill/undotree',       cmd = "UndotreeToggle" },
-    {'sindrets/diffview.nvim'},
     {
-        "monkoose/neocodeium",
+        "stevearc/conform.nvim",
         enabled = false,
-        event = "VeryLazy",
-        config = function()
-            local neocodeium = require("neocodeium")
-            neocodeium.setup()
-            vim.keymap.set("i", "<A-f>", neocodeium.accept)
-            vim.keymap.set("i", "<A-w>", neocodeium.accept_word)
-            vim.keymap.set("i", "<A-a>", neocodeium.accept_line)
-            vim.keymap.set("i", "<A-e>", neocodeium.cycle_or_complete)
-            vim.keymap.set("i", "<A-r>", function() neocodeium.cycle_or_complete(-1) end)
-            vim.keymap.set("i", "<A-c>", neocodeium.clear)
-        end,
-    }
+        opts = {
+            formatters_by_ft = {
+                markdown = { 'prettierd', 'prettier' }
+            },
+        }
+    },
 }
 
 local M = {}
@@ -303,12 +341,16 @@ function M.get_plugins(opts)
     opts = opts or {}
     if opts.use_native_lsp then
         table.insert(plugins, require("dvim.plugins.lsp"))
-        table.insert(plugins, require("dvim.plugins.cmp"))
+        if opts.use_blink_cmp then
+            table.insert(plugins, require("dvim.plugins.blink"))
+        else
+            table.insert(plugins, require("dvim.plugins.cmp"))
+        end
     else
         table.insert(plugins, require("dvim.plugins.duggee"))
     end
     table.insert(plugins, require("dvim.plugins.dap"))
-
+    table.insert(plugins, require("dvim.plugins.ai"))
     return plugins
 end
 
