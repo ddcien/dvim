@@ -179,58 +179,31 @@ local plugins = {
         { 'godlygeek/tabular' },
         { 'sindrets/diffview.nvim' },
     },
-    ------------------------------------
-    {
-        'majutsushi/tagbar',
-        cmd = 'TagbarToggle',
-        config = function()
-            vim.g.tagbar_sort = 0
-        end
-    },
 
     { -- status line
-        "nvim-lualine/lualine.nvim",
-        event = "VimEnter",
-        opts = {
-            sections = {
-                lualine_x = {
-                    function()
-                        local status, serverstatus = require("neocodeium").get_status()
-
-                        -- Tables to map serverstatus and status to corresponding symbols
-                        local server_status_symbols = {
-                            [0] = "󰣺 ", -- Connected
-                            [1] = "󰣻 ", -- Connection Error
-                            [2] = "󰣽 ", -- Disconnected
-                        }
-
-                        local status_symbols = {
-                            [0] = "󰚩 ", -- Enabled
-                            [1] = "󱚧 ", -- Disabled Globally
-                            [2] = "󱙻 ", -- Disabled for Buffer (catch-all)
-                            [3] = "󱚢 ", -- Disabled for Buffer filetype
-                            [5] = "󱚠 ", -- Disabled for Buffer encoding
-                        }
-
-                        -- Handle serverstatus and status fallback (safeguard against any unexpected value)
-                        local luacodeium = server_status_symbols[serverstatus] or "󰣼 "
-                        luacodeium = luacodeium .. (status_symbols[status] or "󱚧 ")
-
-                        return luacodeium
-                    end,
-                    'encoding', 'fileformat', 'filetype' }
-            }
+        'nvim-lualine/lualine.nvim',
+        event = 'VimEnter',
+        dependencies = {
+            'nvim-tree/nvim-web-devicons',
         },
+        opts = {}
+    },
+    { -- outline
+        'hedyhli/outline.nvim',
+        lazy = true,
+        cmd = { 'Outline', 'OutlineOpen' },
+        dependencies = {
+            'epheien/outline-treesitter-provider.nvim',
+            'epheien/outline-ctags-provider.nvim'
+        },
+        opts = {
+            providers = {
+                priority = { 'lsp', 'ctag', 'markdown', 'treesitter', 'ctags', },
+            },
+        }
     },
 
-    {
-        "hedyhli/outline.nvim",
-        opts = {
-            keymaps = {
-                close = {}
-            }
-        },
-    },
+    ------------------------------------
     {
         "nvimtools/none-ls.nvim",
         enabled = false,
