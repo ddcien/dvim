@@ -1,35 +1,32 @@
 local plugins = {
-    -- // unitls
     { -- lazy.nvim
-        "folke/lazy.nvim",
-        tag = "stable"
+        'folke/lazy.nvim',
+        tag = 'stable'
     },
     { -- telescope
-        "nvim-telescope/telescope.nvim",
+        'nvim-telescope/telescope.nvim',
+        -- branch = '0.1.x',
         event = 'VimEnter',
         dependencies = {
-            "nvim-lua/plenary.nvim",
-            'nvim-telescope/telescope-ui-select.nvim',
+            'nvim-lua/plenary.nvim',
+            { 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' },
+            'nvim-treesitter/nvim-treesitter',
             'nvim-tree/nvim-web-devicons',
-            {
-                "nvim-telescope/telescope-fzf-native.nvim",
-                build =
-                "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
-            },
+            'nvim-telescope/telescope-ui-select.nvim',
         },
         config = function()
-            local telescope = require("telescope")
-            local actions = require("telescope.actions")
-            local builtin = require("telescope.builtin")
-            telescope.load_extension("fzf")
-            telescope.load_extension("ui-select")
+            local telescope = require('telescope')
+            local actions = require('telescope.actions')
+            local builtin = require('telescope.builtin')
+            telescope.load_extension('fzf')
+            telescope.load_extension('ui-select')
             require('telescope').setup {
                 defaults = {
                     dynamic_preview_title = true,
                     mappings = {
                         i = {
-                            ["<C-j>"] = actions.move_selection_next,
-                            ["<C-k>"] = actions.move_selection_previous,
+                            ['<C-j>'] = actions.move_selection_next,
+                            ['<C-k>'] = actions.move_selection_previous,
                         },
                     },
                 },
@@ -38,7 +35,7 @@ local plugins = {
                         fuzzy = true,
                         override_generic_sorter = true,
                         override_file_sorter = true,
-                        case_mode = "smart_case",
+                        case_mode = 'smart_case',
                     },
                     ['ui-select'] = {
                         require('telescope.themes').get_dropdown(),
@@ -47,7 +44,7 @@ local plugins = {
             }
             vim.keymap.set('n', '<c-p>', builtin.find_files, { noremap = true, silent = true })
             vim.api.nvim_create_user_command(
-                "Rg",
+                'Rg',
                 function(args)
                     if string.len(args.args) == 0 then
                         builtin.grep_string()
@@ -55,11 +52,11 @@ local plugins = {
                         builtin.grep_string({ search = args.args })
                     end
                 end,
-                { nargs = "?" }
+                { nargs = '?' }
             )
-            vim.api.nvim_create_autocmd("User", {
-                pattern = "TelescopePreviewerLoaded",
-                callback = function(args)
+            vim.api.nvim_create_autocmd('User', {
+                pattern = 'TelescopePreviewerLoaded',
+                callback = function()
                     vim.wo.number = true
                 end,
             })
