@@ -109,116 +109,40 @@ local plugins = {
             require('nvim-treesitter.configs').setup(opts)
         end,
     },
-
-
-    { -- rainbow-delimiters.nvim
-        'HiPhish/rainbow-delimiters.nvim',
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter",
-        }
-    },
     { -- nvim-tree.lua
-        "nvim-tree/nvim-tree.lua",
+        'nvim-tree/nvim-tree.lua',
         config = function()
-            require("nvim-tree").setup({
+            require('nvim-tree').setup({
                 on_attach = function(bufnr)
                     require('nvim-tree.api').config.mappings.default_on_attach(bufnr)
                     vim.keymap.del('n', '<c-e>', { buffer = bufnr })
                 end
             })
-            vim.keymap.set('n', '<c-e>', "<cmd>NvimTreeToggle<cr>", { noremap = true, silent = true })
+            vim.keymap.set('n', '<c-e>', '<cmd>NvimTreeToggle<cr>', { noremap = true, silent = true })
         end
-    },
-    { -- gitsigns.nvim
-        "lewis6991/gitsigns.nvim",
-        opts = {
-            on_attach = function(bufnr)
-                local gs = package.loaded.gitsigns
-
-                local function map(mode, l, r, opts)
-                    opts = opts or {}
-                    opts.buffer = bufnr
-                    vim.keymap.set(mode, l, r, opts)
-                end
-
-                map('n', ']c',
-                    function()
-                        if vim.wo.diff then return ']c' end
-                        vim.schedule(function() gs.next_hunk() end)
-                        return '<Ignore>'
-                    end,
-                    { expr = true })
-
-                map('n', '[c',
-                    function()
-                        if vim.wo.diff then return '[c' end
-                        vim.schedule(function() gs.prev_hunk() end)
-                        return '<Ignore>'
-                    end,
-                    { expr = true })
-
-                map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-            end
-
-        },
-    },
-    { -- colors
-        { "folke/tokyonight.nvim", name = "tokyonight", priority = 1000 },
-        { "dracula/vim",           name = "dracula",    priority = 1000 },
-        { "catppuccin/nvim",       name = "catppuccin", priority = 1000 },
-    },
-    { -- snippets
-        {
-            "L3MON4D3/LuaSnip",
-            version = "v2.*",
-            build = "make install_jsregexp",
-            dependencies = {
-                "rafamadriz/friendly-snippets",
-                "honza/vim-snippets",
-            },
-            config = function()
-                require("luasnip.loaders.from_vscode").lazy_load()
-                require("luasnip.loaders.from_snipmate").lazy_load()
-            end
-        },
-        {
-            "SirVer/ultisnips",
-            dependencies = {
-                { name = "ddvim-snippets", dir = '/home/ddcien/WORK/ddvim-snippets' },
-            }
-        }
     },
     { -- markdown
         {
             'iamcco/markdown-preview.nvim',
-            cmd = { "MarkdownPreview" },
-            ft = { "markdown" },
-            build = function() vim.fn["mkdp#util#install"]() end,
+            cmd = { 'MarkdownPreview' },
+            ft = { 'markdown' },
+            build = function() vim.fn['mkdp#util#install']() end,
             init = function()
-                vim.g.mkdp_filetypes = { "markdown" }
+                vim.g.mkdp_filetypes = { 'markdown' }
                 vim.g.mkdp_preview_options = {
                     disable_filename = true
                 }
             end,
         },
         {
-            "HakonHarnes/img-clip.nvim",
-            event = "VeryLazy",
-            ft = { "markdown" },
+            'HakonHarnes/img-clip.nvim',
+            event = 'VeryLazy',
+            ft = { 'markdown' },
             opts = {
-                -- recommended settings
-                default = {
-                    embed_image_as_base64 = false,
-                    prompt_for_file_name = false,
-                    drag_and_drop = {
-                        insert_mode = true,
-                    },
-                    -- required for Windows users
-                    use_absolute_path = true,
-                },
             },
         },
     },
+
     { -- misc
         { "tpope/vim-repeat" },
         {
@@ -332,6 +256,71 @@ local plugins = {
                 markdown = { 'prettierd', 'prettier' }
             },
         }
+    },
+    { -- rainbow-delimiters.nvim
+        'HiPhish/rainbow-delimiters.nvim',
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter',
+        }
+    },
+    { -- colors
+        { 'folke/tokyonight.nvim', name = "tokyonight", priority = 1000 },
+        { 'dracula/vim',           name = "dracula",    priority = 1000 },
+        { 'catppuccin/nvim',       name = "catppuccin", priority = 1000 },
+    },
+    { -- snippets
+        {
+            "L3MON4D3/LuaSnip",
+            version = "v2.*",
+            build = "make install_jsregexp",
+            dependencies = {
+                "rafamadriz/friendly-snippets",
+                "honza/vim-snippets",
+            },
+            config = function()
+                require("luasnip.loaders.from_vscode").lazy_load()
+                require("luasnip.loaders.from_snipmate").lazy_load()
+            end
+        },
+        {
+            "SirVer/ultisnips",
+            dependencies = {
+                { name = "ddvim-snippets", dir = '/home/ddcien/WORK/ddvim-snippets' },
+            }
+        }
+    },
+    { -- gitsigns.nvim
+        'lewis6991/gitsigns.nvim',
+        opts = {
+            on_attach = function(bufnr)
+                local gs = package.loaded.gitsigns
+
+                local function map(mode, l, r, opts)
+                    opts = opts or {}
+                    opts.buffer = bufnr
+                    vim.keymap.set(mode, l, r, opts)
+                end
+
+                map('n', ']c',
+                    function()
+                        if vim.wo.diff then return ']c' end
+                        vim.schedule(function() gs.next_hunk() end)
+                        return '<Ignore>'
+                    end,
+                    { expr = true })
+
+                map('n', '[c',
+                    function()
+                        if vim.wo.diff then return '[c' end
+                        vim.schedule(function() gs.prev_hunk() end)
+                        return '<Ignore>'
+                    end,
+                    { expr = true })
+
+                map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+            end
+
+        },
     },
 }
 
