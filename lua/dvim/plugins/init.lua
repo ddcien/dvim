@@ -144,58 +144,50 @@ local plugins = {
     },
 
     { -- misc
-        { "tpope/vim-repeat" },
-        {
-            "lukas-reineke/indent-blankline.nvim",
-            main = "ibl",
-            opts = {}
-        },
-        {
-            "NeogitOrg/neogit",
-            dependencies = {
-                "nvim-lua/plenary.nvim",
-                "sindrets/diffview.nvim",
-                "nvim-telescope/telescope.nvim",
-            },
-            config = true
-        },
-        { "tpope/vim-fugitive" },
-        { "kevinhwang91/nvim-bqf",    ft = "qf" },
-        { "gbprod/yanky.nvim",        opts = {} },
+        { 'kevinhwang91/nvim-bqf',    ft = { 'qf' } },
+        { 'gbprod/yanky.nvim',        opts = {} },
         { 'numToStr/Comment.nvim',    opts = {} },
-        { "folke/which-key.nvim",     opts = {} },
         { 'ethanholz/nvim-lastplace', opts = {} },
+
         {
-            "kylechui/nvim-surround",
-            version = "*",
-            event = "VeryLazy",
+            'lukas-reineke/indent-blankline.nvim',
+            main = 'ibl',
+            ---@module 'ibl'
+            ---@type ibl.config
+            opts = {},
+        },
+        {
+            'kylechui/nvim-surround',
+            version = '*',
+            event = 'VeryLazy',
             opts = {}
         },
         {
             'goolord/alpha-nvim',
-            event = "VimEnter",
-            dependencies = { 'nvim-tree/nvim-web-devicons' },
+            event = 'VimEnter',
+            dependencies = {
+                'nvim-tree/nvim-web-devicons'
+            },
             opts = function()
                 return require('alpha.themes.startify').config
             end
         },
-        {
-            'majutsushi/tagbar',
-            cmd = 'TagbarToggle',
-            config = function()
-                vim.g.tagbar_sort = 0
-            end
-        },
-        { "windwp/nvim-autopairs", event = "InsertEnter", opts = {}, },
+        { 'folke/which-key.nvim',  opts = {} },
+        { 'tpope/vim-repeat' },
+        { 'windwp/nvim-autopairs', event = 'InsertEnter', opts = {}, },
+        { 'mbbill/undotree',       cmd = 'UndotreeToggle' },
         { 'godlygeek/tabular' },
-        { 'mbbill/undotree',       cmd = "UndotreeToggle" },
-        { 'sindrets/diffview.nvim' },
-
-        { "windwp/nvim-autopairs", event = "InsertEnter", opts = {}, },
-        { 'godlygeek/tabular' },
-        { 'mbbill/undotree',       cmd = "UndotreeToggle" },
         { 'sindrets/diffview.nvim' },
     },
+    ------------------------------------
+    {
+        'majutsushi/tagbar',
+        cmd = 'TagbarToggle',
+        config = function()
+            vim.g.tagbar_sort = 0
+        end
+    },
+
     { -- status line
         "nvim-lualine/lualine.nvim",
         event = "VimEnter",
@@ -322,6 +314,16 @@ local plugins = {
 
         },
     },
+    {
+        "NeogitOrg/neogit",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "sindrets/diffview.nvim",
+            "nvim-telescope/telescope.nvim",
+        },
+        config = true
+    },
+    { "tpope/vim-fugitive" },
 }
 
 local M = {}
