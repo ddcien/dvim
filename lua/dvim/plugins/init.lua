@@ -63,39 +63,40 @@ local plugins = {
         end,
     },
     { -- treesitter
-        "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
-        event = { "VeryLazy" },
-        cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
+        'nvim-treesitter/nvim-treesitter',
+        build = ':TSUpdate',
+        event = { 'VeryLazy' },
+        cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
         opts = function()
             return {
                 sync_install = false,
                 auto_install = false,
                 ensure_installed = {
-                    "bash", "c", "cpp", "cmake", "comment", "devicetree", "diff",
-                    "dockerfile", "gitcommit", "gitignore", "json", "jsonc",
-                    "json", "jsonc", "lua", "make", "markdown", "markdown_inline",
-                    "python", "query", "rust", "verilog", "vimdoc", "vim", "yaml",
+                    'bash', 'c', 'cpp', 'cmake', 'comment', 'devicetree', 'diff',
+                    'dockerfile', 'gitcommit', 'gitignore', 'json', 'jsonc',
+                    'json', 'jsonc', 'lua', 'make', 'markdown', 'markdown_inline',
+                    'python', 'query', 'rust', 'verilog', 'vimdoc', 'vim', 'yaml',
+                    'gitcommit'
                 },
                 highlight = { enable = true },
                 indent = { enable = true },
                 matchup = {
                     enable = false,
-                    disable = { "c", "cpp" },
+                    disable = { 'c', 'cpp' },
                 },
                 incremental_selection = {
                     enable = true,
                     keymaps = {
-                        init_selection = "<C-space>",
-                        node_incremental = "<C-space>",
+                        init_selection = '<C-space>',
+                        node_incremental = '<C-space>',
                         scope_incremental = false,
-                        node_decremental = "<bs>",
+                        node_decremental = '<bs>',
                     },
                 },
             }
         end,
         config = function(_, opts)
-            if type(opts.ensure_installed) == "table" then
+            if type(opts.ensure_installed) == 'table' then
                 local added = {}
                 opts.ensure_installed = vim.tbl_filter(function(lang)
                     if added[lang] then
@@ -105,9 +106,11 @@ local plugins = {
                     return true
                 end, opts.ensure_installed)
             end
-            require("nvim-treesitter.configs").setup(opts)
+            require('nvim-treesitter.configs').setup(opts)
         end,
     },
+
+
     { -- rainbow-delimiters.nvim
         'HiPhish/rainbow-delimiters.nvim',
         dependencies = {
