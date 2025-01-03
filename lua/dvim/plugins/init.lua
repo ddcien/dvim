@@ -178,6 +178,13 @@ local plugins = {
         { 'mbbill/undotree',       cmd = 'UndotreeToggle' },
         { 'godlygeek/tabular' },
         { 'sindrets/diffview.nvim' },
+
+        { -- rainbow-delimiters.nvim
+            'HiPhish/rainbow-delimiters.nvim',
+            dependencies = {
+                'nvim-treesitter/nvim-treesitter',
+            }
+        },
     },
 
     { -- status line
@@ -202,6 +209,53 @@ local plugins = {
             },
         }
     },
+    { -- git
+        { 'tpope/vim-fugitive' },
+        {
+            'rbong/vim-flog',
+            lazy = true,
+            cmd = { 'Flog', 'Flogsplit', 'Floggit' },
+            dependencies = {
+                'tpope/vim-fugitive',
+            },
+        },
+        { -- gitsigns.nvim
+            'lewis6991/gitsigns.nvim',
+            opts = {
+                on_attach = function(bufnr)
+                    local gitsigns = require('gitsigns')
+
+                    local function map(mode, l, r, opts)
+                        opts = opts or {}
+                        opts.buffer = bufnr
+                        vim.keymap.set(mode, l, r, opts)
+                    end
+
+                    map('n', ']c', function()
+                        if vim.wo.diff then
+                            vim.cmd.normal({ ']c', bang = true })
+                        else
+                            gitsigns.nav_hunk('next')
+                        end
+                    end)
+
+                    map('n', '[c', function()
+                        if vim.wo.diff then
+                            vim.cmd.normal({ '[c', bang = true })
+                        else
+                            gitsigns.nav_hunk('prev')
+                        end
+                    end)
+                end
+            },
+        },
+    },
+    { -- colors
+        { 'folke/tokyonight.nvim', name = 'tokyonight', priority = 1000 },
+        { 'dracula/vim',           name = 'dracula',    priority = 1000 },
+        { 'catppuccin/nvim',       name = 'catppuccin', priority = 1000 },
+    },
+
 
     ------------------------------------
     {
@@ -221,17 +275,6 @@ local plugins = {
                 markdown = { 'prettierd', 'prettier' }
             },
         }
-    },
-    { -- rainbow-delimiters.nvim
-        'HiPhish/rainbow-delimiters.nvim',
-        dependencies = {
-            'nvim-treesitter/nvim-treesitter',
-        }
-    },
-    { -- colors
-        { 'folke/tokyonight.nvim', name = "tokyonight", priority = 1000 },
-        { 'dracula/vim',           name = "dracula",    priority = 1000 },
-        { 'catppuccin/nvim',       name = "catppuccin", priority = 1000 },
     },
     { -- snippets
         {
@@ -254,49 +297,6 @@ local plugins = {
             }
         }
     },
-    { -- gitsigns.nvim
-        'lewis6991/gitsigns.nvim',
-        opts = {
-            on_attach = function(bufnr)
-                local gs = package.loaded.gitsigns
-
-                local function map(mode, l, r, opts)
-                    opts = opts or {}
-                    opts.buffer = bufnr
-                    vim.keymap.set(mode, l, r, opts)
-                end
-
-                map('n', ']c',
-                    function()
-                        if vim.wo.diff then return ']c' end
-                        vim.schedule(function() gs.next_hunk() end)
-                        return '<Ignore>'
-                    end,
-                    { expr = true })
-
-                map('n', '[c',
-                    function()
-                        if vim.wo.diff then return '[c' end
-                        vim.schedule(function() gs.prev_hunk() end)
-                        return '<Ignore>'
-                    end,
-                    { expr = true })
-
-                map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-            end
-
-        },
-    },
-    {
-        "NeogitOrg/neogit",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "sindrets/diffview.nvim",
-            "nvim-telescope/telescope.nvim",
-        },
-        config = true
-    },
-    { "tpope/vim-fugitive" },
 }
 
 local M = {}
