@@ -6,8 +6,6 @@ end
 
 if vim.g.neovide then
     vim.o.guifont = "Victor Mono"
-    vim.g.neovide_fullscreen = true
-    vim.g.neovide_hide_mouse_when_typing = true
 end
 
 require("dvim.settings").load_default_options()
