@@ -135,6 +135,15 @@ local plugins = {
             end,
         },
         {
+            'MeanderingProgrammer/render-markdown.nvim',
+            dependencies = {
+                'nvim-treesitter/nvim-treesitter',
+                'nvim-tree/nvim-web-devicons'
+            },
+            opts = {},
+            ft = { 'markdown', }
+        },
+        {
             'HakonHarnes/img-clip.nvim',
             event = 'VeryLazy',
             ft = { 'markdown' },
@@ -258,24 +267,6 @@ local plugins = {
 
 
     ------------------------------------
-    {
-        "nvimtools/none-ls.nvim",
-        enabled = false,
-        opts = function(_, opts)
-            local nls = require("null-ls")
-            opts.sources = opts.sources or {}
-            table.insert(opts.sources, nls.builtins.formatting.prettier)
-        end,
-    },
-    {
-        "stevearc/conform.nvim",
-        enabled = false,
-        opts = {
-            formatters_by_ft = {
-                markdown = { 'prettierd', 'prettier' }
-            },
-        }
-    },
     { -- snippets
         {
             "L3MON4D3/LuaSnip",
@@ -313,7 +304,7 @@ function M.get_plugins(opts)
     else
         table.insert(plugins, require("dvim.plugins.duggee"))
     end
-    table.insert(plugins, require("dvim.plugins.dap"))
+    -- table.insert(plugins, require("dvim.plugins.dap"))
     table.insert(plugins, require("dvim.plugins.ai"))
     return plugins
 end

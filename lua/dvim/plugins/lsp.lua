@@ -7,23 +7,23 @@ local function config_ui()
         signs = true,
         float = {
             focusable = false,
-            style = "minimal",
-            border = "rounded",
-            source = "if_many",
+            style = 'minimal',
+            border = 'rounded',
+            source = 'if_many',
             scope = 'cursor',
             close_events = {
-                "BufLeave",
-                "CursorMoved",
-                "InsertEnter",
-                "FocusLost",
-                "TextChanged"
+                'BufLeave',
+                'CursorMoved',
+                'InsertEnter',
+                'FocusLost',
+                'TextChanged'
             }
         }
     })
 end
 
 local function config_lsp_mappings()
-    local telescope = require("telescope.builtin")
+    local telescope = require('telescope.builtin')
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('UserLspConfig', {}),
         callback = function(evt)
@@ -44,13 +44,16 @@ local function config_lsp_mappings()
             _buf_keymap_set({ 'n', 'v' }, '<F3>', function() vim.lsp.buf.format { async = true } end)
             _buf_keymap_set({ 'n', 'v' }, '<F4>', vim.lsp.buf.code_action)
             _buf_keymap_set({ 'n', 'v' }, 'gf',
-                function() vim.lsp.buf.code_action({ apply = true, context = { only = { "quickfix" }, } }) end)
+                function()
+                    vim.lsp.buf.code_action(
+                        { apply = true, context = { only = { 'quickfix' }, } })
+                end)
 
             local client = vim.lsp.get_client_by_id(evt.data.client_id)
             if client and client.server_capabilities.documentHighlightProvider then
-                vim.api.nvim_create_autocmd("CursorHold",
+                vim.api.nvim_create_autocmd('CursorHold',
                     { buffer = evt.buf, callback = vim.lsp.buf.document_highlight })
-                vim.api.nvim_create_autocmd("CursorMoved",
+                vim.api.nvim_create_autocmd('CursorMoved',
                     { buffer = evt.buf, callback = vim.lsp.buf.clear_references })
             end
         end,
@@ -77,15 +80,15 @@ local function config_lsp_servers()
                     preselectSupport = true,
                     resolveSupport = {
                         properties = {
-                            "documentation",
-                            "detail",
-                            "additionalTextEdits",
-                            "sortText",
-                            "filterText",
-                            "insertText",
-                            "textEdit",
-                            "insertTextFormat",
-                            "insertTextMode",
+                            'documentation',
+                            'detail',
+                            'additionalTextEdits',
+                            'sortText',
+                            'filterText',
+                            'insertText',
+                            'textEdit',
+                            'insertTextFormat',
+                            'insertTextMode',
                         }
                     },
                     snippetSupport = true,
@@ -95,11 +98,11 @@ local function config_lsp_servers()
                 },
                 completionList = {
                     itemDefaults = {
-                        "commitCharacters",
-                        "editRange",
-                        "insertTextFormat",
-                        "insertTextMode",
-                        "data",
+                        'commitCharacters',
+                        'editRange',
+                        'insertTextFormat',
+                        'insertTextMode',
+                        'data',
                     }
                 },
                 contextSupport = true,
@@ -118,7 +121,9 @@ local function config_lsp_servers()
         'neocmake',      -- 'cmake'
         'lua_ls',        -- 'lua'
         'marksman',      -- 'markdown'
-        -- 'vimls',
+        'vimls',         -- 'vim',
+
+        -- 'harper_ls',     -- 'anguage checker'
         -- 'markdown_oxide',
         -- 'omnisharp',
     }) do
@@ -127,39 +132,50 @@ local function config_lsp_servers()
 end
 
 return {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-        "nvim-telescope/telescope.nvim",
-        "tamago324/nlsp-settings.nvim",
-        { "j-hui/fidget.nvim",   opts = {}, },
-        { "folke/neodev.nvim",   opts = {} },
-        { 'mrcjkb/rustaceanvim', version = '^4', lazy = false, },
-        {
-            "SmiteshP/nvim-navbuddy",
-            dependencies = {
-                { "MunifTanjim/nui.nvim", },
-                { "SmiteshP/nvim-navic",  opts = {}, },
-            },
-            opts = { lsp = { auto_attach = true } }
+    { 'j-hui/fidget.nvim', opts = {}, },
+    {
+        'SmiteshP/nvim-navbuddy',
+        dependencies = {
+            'neovim/nvim-lspconfig',
+            'MunifTanjim/nui.nvim',
+            'SmiteshP/nvim-navic',
         },
-        {
-            'kevinhwang91/nvim-ufo',
-            dependencies = 'kevinhwang91/promise-async',
-            config = function()
-                local ufo = require('ufo')
-                vim.o.foldcolumn = '0'
-                vim.o.foldlevel = 99
-                vim.o.foldlevelstart = 99
-                vim.o.foldenable = true
-                ufo.setup()
-                vim.keymap.set('n', 'zR', ufo.openAllFolds)
-                vim.keymap.set('n', 'zM', ufo.closeAllFolds)
-            end
-        },
+        opts = { lsp = { auto_attach = true } }
     },
-    config = function()
-        config_ui()
-        config_lsp_mappings()
-        config_lsp_servers()
-    end
+    {
+        'kevinhwang91/nvim-ufo',
+        dependencies = {
+            'kevinhwang91/promise-async'
+        },
+        config = function()
+            vim.o.foldcolumn = '0'
+            vim.o.foldlevel = 99
+            vim.o.foldlevelstart = 99
+            vim.o.foldenable = true
+            local ufo = require('ufo')
+            vim.keymap.set('n', 'zR', ufo.openAllFolds)
+            vim.keymap.set('n', 'zM', ufo.closeAllFolds)
+            ufo.setup()
+        end
+    },
+    {
+        'nvimtools/none-ls.nvim',
+        opts = function(_, opts)
+            local nls = require('null-ls')
+            opts.sources = opts.sources or {}
+            table.insert(opts.sources, nls.builtins.formatting.prettierd)
+        end,
+    },
+    {
+        'neovim/nvim-lspconfig',
+        dependencies = {
+            'nvim-telescope/telescope.nvim',
+            'j-hui/fidget.nvim',
+        },
+        config = function()
+            config_ui()
+            config_lsp_mappings()
+            config_lsp_servers()
+        end
+    }
 }
