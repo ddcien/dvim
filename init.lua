@@ -45,11 +45,10 @@ require("lazy").setup({
     state    = utils.join_paths(dvim_state_dir, "lazy", "state.json"),
     readme   = { enabled = false, },
 })
+vim.cmd [[colorscheme tokyonight]]
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>')
-vim.cmd [[colorscheme tokyonight]]
-
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
     pattern = { "*.lds" },
     callback = function(ev)
