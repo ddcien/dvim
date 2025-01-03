@@ -28,7 +28,7 @@ return {
             },
             menu = {
                 auto_show = true,
-                border = 'single',
+                -- border = 'single',
                 draw = {
                     columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 }, },
                     treesitter = { 'lsp' }
@@ -41,7 +41,7 @@ return {
                 auto_show = true,
                 auto_show_delay_ms = 500,
                 treesitter_highlighting = true,
-                window = { border = 'single' }
+                -- window = { border = 'single' }
             },
         },
         signature = {
@@ -57,10 +57,10 @@ return {
             kind_icons = kind_icons,
         },
         sources = {
-            default = { 'lsp', 'path', 'snippets', 'buffer', },
+            default = { 'lsp', 'snippets', 'path', 'buffer', },
             per_filetype = {
-                markdown = { 'lsp', 'path', 'snippets', 'buffer', 'emoji', },
-                gitcommit = { 'lsp', 'path', 'snippets', 'buffer', 'emoji', },
+                markdown = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
+                gitcommit = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
             },
             cmdline = {},
             providers = {
