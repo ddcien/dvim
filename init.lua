@@ -53,7 +53,3 @@ vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
         vim.api.nvim_set_option_value("filetype", "ld", { buf = ev.buf })
     end
 })
-
-vim.keymap.del('n', 'grn', {})
-vim.keymap.del({ 'n', 'x' }, 'gra', {})
-vim.keymap.del('n', 'grr', {})
