@@ -3,11 +3,11 @@ local kind_icons = icons.kind
 
 return {
     'saghen/blink.cmp',
+    enabled = true,
     version = '*',
     dependencies = {
-        'rafamadriz/friendly-snippets',
-        'mikavilpas/blink-ripgrep.nvim',
         'moyiz/blink-emoji.nvim',
+        'rafamadriz/friendly-snippets',
     },
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -24,13 +24,30 @@ return {
                 show_on_accept_on_trigger_character = true,
             },
             list = {
-                selection = 'auto_insert',
+                selection = { preselect = false, auto_insert = true },
             },
             menu = {
                 auto_show = true,
                 -- border = 'single',
                 draw = {
-                    columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 }, },
+                    components = {
+                        source_name = {
+                            width = { max = 30 },
+                            text = function(ctx)
+                                if (ctx.item.client_id) then
+                                    local client = vim.lsp.get_client_by_id(ctx.item.client_id)
+                                    return "LSP: " .. client.name
+                                end
+                                return ctx.source_name
+                            end,
+                            highlight = 'BlinkCmpSource',
+                        },
+                    },
+                    columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 },
+                        {
+                            "source_name"
+                        }
+                    },
                     treesitter = { 'lsp' }
                 }
             },
@@ -57,19 +74,17 @@ return {
             kind_icons = kind_icons,
         },
         sources = {
-            default = { 'lsp', 'snippets', 'path', 'buffer', },
-            per_filetype = {
-                markdown = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
-                gitcommit = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
-            },
+            default = { 'lsp', 'snippets', 'path', 'buffer' },
+            -- per_filetype = {
+            --     markdown = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
+            --     gitcommit = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
+            -- },
             cmdline = {},
             providers = {
-                ripgrep = {
-                    module = "blink-ripgrep",
-                    name = "Ripgrep",
-                    opts = {
-                        prefix_min_len = 5,
-                    },
+                lsp = {
+                    transform_items = function(_, items)
+                        return items
+                    end,
                 },
                 emoji = {
                     module = "blink-emoji",

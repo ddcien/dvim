@@ -3,6 +3,33 @@ local plugins = {
         'folke/lazy.nvim',
         tag = 'stable'
     },
+    {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {
+            library = {
+                -- See the configuration section for more details
+                -- Load luvit types when the `vim.uv` word is found
+                { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+            },
+        },
+    },
+    {
+        'stevearc/conform.nvim',
+        opts = {
+            formatters_by_ft = {
+                lua      = { lsp_format = "fallback" },
+                rust     = { lsp_format = "fallback" },
+                python   = { lsp_format = "fallback" },
+                sh       = { "shfmt", lsp_format = "fallback" },
+                markdown = { "prettierd", lsp_format = "fallback" },
+                ["*"]    = { "codespell" },
+                -- Use the "_" filetype to run formatters on filetypes that don't
+                -- have other formatters configured.
+                ["_"]    = { "trim_whitespace" },
+            },
+        },
+    },
     { -- telescope
         'nvim-telescope/telescope.nvim',
         -- branch = '0.1.x',
@@ -258,6 +285,12 @@ local plugins = {
                 end
             },
         },
+        {
+            "wintermute-cell/gitignore.nvim",
+            config = function()
+                require('gitignore')
+            end,
+        }
     },
     { -- colors
         { 'folke/tokyonight.nvim', name = 'tokyonight', priority = 1000 },
@@ -288,6 +321,7 @@ local plugins = {
             }
         }
     },
+    { "preservim/tagbar" }
 }
 
 local M = {}
@@ -304,7 +338,7 @@ function M.get_plugins(opts)
     else
         table.insert(plugins, require("dvim.plugins.duggee"))
     end
-    -- table.insert(plugins, require("dvim.plugins.dap"))
+    table.insert(plugins, require("dvim.plugins.dap"))
     table.insert(plugins, require("dvim.plugins.ai"))
     return plugins
 end
