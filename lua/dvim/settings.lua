@@ -60,7 +60,8 @@ function M.load_default_options()
         fileencodings = "utf-8,gbk",
         undodir = undodir,
         shadafile = shadafile,
-        foldlevel = 2,
+        foldlevel = 99,
+        foldlevelstart = 99,
     }
 
     vim.opt.spelllang:append("cjk")
