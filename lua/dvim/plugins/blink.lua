@@ -36,6 +36,7 @@ return {
                             text = function(ctx)
                                 if (ctx.item.client_id) then
                                     local client = vim.lsp.get_client_by_id(ctx.item.client_id)
+                                    assert(client)
                                     return "LSP: " .. client.name
                                 end
                                 return ctx.source_name
@@ -43,10 +44,10 @@ return {
                             highlight = 'BlinkCmpSource',
                         },
                     },
-                    columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 },
-                        {
-                            "source_name"
-                        }
+                    columns = {
+                        { 'kind_icon' },
+                        { 'label',      'label_description', gap = 1 },
+                        { "source_name" }
                     },
                     treesitter = { 'lsp' }
                 }
