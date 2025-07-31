@@ -10,6 +10,10 @@ return {
         end
     },
     {
+        "theHamsta/nvim-dap-virtual-text",
+        opts = {}
+    },
+    {
         "rcarriga/nvim-dap-ui",
         dependencies = {
             "mfussenegger/nvim-dap",
@@ -38,27 +42,29 @@ return {
     },
     {
         "mfussenegger/nvim-dap",
+        event = "VeryLazy",
+
         config = function()
             local dap = require('dap')
             dap.adapters.lldb = {
                 type = 'executable',
-                command = '/usr/bin/lldb-dap-20',
+                command = '/usr/bin/lldb-dap-19', -- adjust as needed, must be absolute path
                 name = 'lldb'
             }
+            dap.adapters.codelldb = dap.adapters.lldb
+
             dap.configurations.cpp = {
                 {
-                    name = 'Launch',
-                    type = 'lldb',
-                    request = 'launch',
+                    name = "Launch file",
+                    type = "lldb",
+                    request = "launch",
                     program = function()
                         return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
                     end,
                     cwd = '${workspaceFolder}',
-                    stopOnEntry = false,
-                    args = {},
+                    stopAtEntry = true,
                 },
             }
-
             dap.configurations.c = dap.configurations.cpp
             dap.configurations.rust = dap.configurations.cpp
 
@@ -72,12 +78,8 @@ return {
                 function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
             vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
             vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
-            vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function()
-                require('dap.ui.widgets').hover()
-            end)
-            vim.keymap.set({ 'n', 'v' }, '<Leader>dp', function()
-                require('dap.ui.widgets').preview()
-            end)
+            vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function() require('dap.ui.widgets').hover() end)
+            vim.keymap.set({ 'n', 'v' }, '<Leader>dp', function() require('dap.ui.widgets').preview() end)
             vim.keymap.set('n', '<Leader>df', function()
                 local widgets = require('dap.ui.widgets')
                 widgets.centered_float(widgets.frames)
