@@ -43,7 +43,6 @@ function M.load_default_options()
         termguicolors = true,
         undofile = true,
         laststatus = 3,
-        mouse = "",
         showmode = false,
         showcmd = false,
         backup = false,
@@ -62,6 +61,9 @@ function M.load_default_options()
         shadafile = shadafile,
         foldlevel = 99,
         foldlevelstart = 99,
+
+        mouse = "",
+        mousemodel = "extend",
     }
 
     vim.opt.spelllang:append("cjk")
