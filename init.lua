@@ -4,9 +4,9 @@ end
 
 vim.deprecate = function() end
 
-require("dvim.settings").load_default_options()
-require("dvim.neovide")
-require("dvim.lazy")
+require("config.options")
+require("config.neovide")
+require("config.lazy")
 
 vim.cmd [[colorscheme tokyonight]]
 

@@ -1,8 +1,9 @@
 local function config_ui()
     vim.diagnostic.config({
         virtual_text = false,
-        update_in_insert = false,
-        underline = true,
+        virtual_lines = false,
+
+
         severity_sort = true,
         signs = true,
         float = {
@@ -41,7 +42,6 @@ local function config_lsp_mappings()
             _buf_keymap_set('n', 'gr', function() telescope.lsp_references({ include_current_line = true }) end)
             _buf_keymap_set('n', '<F2>', vim.lsp.buf.rename)
             _buf_keymap_set('i', '<C-K>', vim.lsp.buf.signature_help)
-            _buf_keymap_set({ 'n', 'v' }, '<F3>', function() vim.lsp.buf.format { async = true } end)
             _buf_keymap_set({ 'n', 'v' }, '<F4>', vim.lsp.buf.code_action)
             _buf_keymap_set({ 'n', 'v' }, 'gf',
                 function()
@@ -118,7 +118,7 @@ local function config_lsp_servers()
         default_config = {
             cmd = { 'lookls' },
             single_file_support = true,
-            -- filetypes = { 'gitcommit', 'text', 'markdown' },
+            filetypes = { 'gitcommit', 'text', 'markdown' },
             root_dir = function(fname)
                 return vim.fs.dirname(vim.fs.find('.git', { path = fname, upward = true })[1])
             end,
@@ -134,6 +134,9 @@ local function config_lsp_servers()
         'lua_ls',        -- 'lua'
         'marksman',      -- 'markdown'
         'vimls',         -- 'vim',
+        'verible',       -- 'verilog'
+        'dts_lsp',       -- 'devicetree
+        -- 'ginko_ls',      -- 'devicetree
         'bashls',
         'looklsp',
         -- 'harper_ls',     -- 'anguage checker'
@@ -146,60 +149,57 @@ end
 
 return {
     { 'j-hui/fidget.nvim', opts = {}, },
+
     {
-        'SmiteshP/nvim-navbuddy',
+        'hasansujon786/nvim-navbuddy',
         dependencies = {
             'neovim/nvim-lspconfig',
             'MunifTanjim/nui.nvim',
             'SmiteshP/nvim-navic',
+            'numToStr/Comment.nvim',
+            'nvim-telescope/telescope.nvim',
         },
         opts = { lsp = { auto_attach = true } }
     },
-    {
-        'kevinhwang91/nvim-ufo',
-        dependencies = {
-            'kevinhwang91/promise-async'
-        },
-        opts = {
-            fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate)
-                local newVirtText = {}
-                local suffix = (' 󰁂 %d '):format(endLnum - lnum)
-                local sufWidth = vim.fn.strdisplaywidth(suffix)
-                local targetWidth = width - sufWidth
-                local curWidth = 0
-                for _, chunk in ipairs(virtText) do
-                    local chunkText = chunk[1]
-                    local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-                    if targetWidth > curWidth + chunkWidth then
-                        table.insert(newVirtText, chunk)
-                    else
-                        chunkText = truncate(chunkText, targetWidth - curWidth)
-                        local hlGroup = chunk[2]
-                        table.insert(newVirtText, { chunkText, hlGroup })
-                        chunkWidth = vim.fn.strdisplaywidth(chunkText)
-                        -- str width returned from truncate() may less than 2nd argument, need padding
-                        if curWidth + chunkWidth < targetWidth then
-                            suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
-                        end
-                        break
-                    end
-                    curWidth = curWidth + chunkWidth
-                end
-                table.insert(newVirtText, { suffix, 'MoreMsg' })
-                return newVirtText
-            end
-        },
-    },
+
     {
         'neovim/nvim-lspconfig',
         dependencies = {
             'nvim-telescope/telescope.nvim',
             'j-hui/fidget.nvim',
+            'saghen/blink.cmp',
         },
+
+        -- opts = {
+        --     servers = {
+        --         lua_ls = {}
+        --     }
+        -- },
+        --
+        -- config = function(_, opts)
+        --     config_ui()
+        --     config_lsp_mappings()
+        --
+        --     local lspconfig = require('lspconfig')
+        --     for server, config in pairs(opts.servers) do
+        --         -- passing config.capabilities to blink.cmp merges with the capabilities in your
+        --         -- `opts[server].capabilities, if you've defined it
+        --         config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
+        --         lspconfig[server].setup(config)
+        --     end
+        -- end,
+
         config = function()
             config_ui()
             config_lsp_mappings()
             config_lsp_servers()
-        end
+        end,
+        --
+        -- -- example calling setup directly for each LSP
+        -- config = function()
+        --     local capabilities = require('blink.cmp').get_lsp_capabilities()
+        --     local lspconfig = require('lspconfig')
+        --     lspconfig['lua_ls'].setup({ capabilities = capabilities })
+        -- end
     }
 }

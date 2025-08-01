@@ -15,20 +15,32 @@ local plugins = {
         },
     },
     {
-        'stevearc/conform.nvim',
+        "stevearc/conform.nvim",
+        keys = {
+            { "<leader>f", function() require("conform").format({ async = true }) end, mode = "",          desc = "Format buffer", },
+            { "<F3>",      function() require('conform').format({ async = true }) end, mode = { 'n', 'v' } },
+        },
         opts = {
             formatters_by_ft = {
-                lua      = { lsp_format = "fallback" },
-                rust     = { lsp_format = "fallback" },
-                python   = { lsp_format = "fallback" },
-                sh       = { "shfmt", lsp_format = "fallback" },
-                markdown = { "prettierd", lsp_format = "fallback" },
-                ["*"]    = { "codespell" },
-                -- Use the "_" filetype to run formatters on filetypes that don't
-                -- have other formatters configured.
-                ["_"]    = { "trim_whitespace" },
+                lua        = { "stylua" },
+                python     = { "isort", "black" },
+                javascript = { "prettierd", "prettier", stop_after_first = true },
+                sh         = { "shfmt", },
+                markdown   = { "prettierd", },
             },
+            default_format_opts = {
+                lsp_format = "fallback",
+            },
+            -- format_on_save = { timeout_ms = 500 },
+            -- formatters = {
+            --     shfmt = {
+            --         prepend_args = { "-i", "2" },
+            --     },
+            -- },
         },
+        init = function()
+            vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+        end,
     },
     { -- telescope
         'nvim-telescope/telescope.nvim',
@@ -40,15 +52,24 @@ local plugins = {
             'nvim-treesitter/nvim-treesitter',
             'nvim-tree/nvim-web-devicons',
             'nvim-telescope/telescope-ui-select.nvim',
+            'nvim-telescope/telescope-file-browser.nvim',
         },
         config = function()
             local telescope = require('telescope')
             local actions = require('telescope.actions')
             local builtin = require('telescope.builtin')
+
             telescope.load_extension('fzf')
             telescope.load_extension('ui-select')
+            telescope.load_extension('file_browser')
+
             require('telescope').setup {
                 defaults = {
+                    layout_strategy = 'horizontal',
+                    layout_config = {
+                        vertical = { width = 0.8 }
+                        -- other layout configuration here
+                    },
                     dynamic_preview_title = true,
                     mappings = {
                         i = {
@@ -136,6 +157,13 @@ local plugins = {
             require('nvim-treesitter.configs').setup(opts)
         end,
     },
+    {
+        'nvim-treesitter/nvim-treesitter-context',
+        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        opts = {
+            multiline_threshold = 1,
+        },
+    },
     { -- nvim-tree.lua
         'nvim-tree/nvim-tree.lua',
         config = function()
@@ -152,7 +180,7 @@ local plugins = {
         {
             'iamcco/markdown-preview.nvim',
             cmd = { 'MarkdownPreview' },
-            ft = { 'markdown' },
+            ft = { "markdown", "codecompanion" },
             build = function() vim.fn['mkdp#util#install']() end,
             init = function()
                 vim.g.mkdp_filetypes = { 'markdown' }
@@ -184,13 +212,16 @@ local plugins = {
         { 'gbprod/yanky.nvim',        opts = {} },
         { 'numToStr/Comment.nvim',    opts = {} },
         { 'ethanholz/nvim-lastplace', opts = {} },
-
         {
             'lukas-reineke/indent-blankline.nvim',
             main = 'ibl',
             ---@module 'ibl'
             ---@type ibl.config
-            opts = {},
+            opts = {
+                exclude = {
+                    filetypes = { "dashboard", "alpha", "neo-tree", "NvimTree", "lazy", "mason", "startify" },
+                },
+            },
         },
         {
             'kylechui/nvim-surround',
@@ -204,8 +235,8 @@ local plugins = {
             dependencies = {
                 'nvim-tree/nvim-web-devicons'
             },
-            opts = function()
-                return require('alpha.themes.startify').config
+            config = function()
+                require 'alpha'.setup(require 'alpha.themes.startify'.config)
             end
         },
         { 'folke/which-key.nvim',  opts = {} },
@@ -214,13 +245,6 @@ local plugins = {
         { 'mbbill/undotree',       cmd = 'UndotreeToggle' },
         { 'godlygeek/tabular' },
         { 'sindrets/diffview.nvim' },
-
-        { -- rainbow-delimiters.nvim
-            'HiPhish/rainbow-delimiters.nvim',
-            dependencies = {
-                'nvim-treesitter/nvim-treesitter',
-            }
-        },
     },
 
     { -- status line
@@ -250,7 +274,7 @@ local plugins = {
         {
             'rbong/vim-flog',
             lazy = true,
-            cmd = { 'Flog', 'Flogsplit', 'Floggit' },
+            cmd = { 'Flog', 'Flogsplit' },
             dependencies = {
                 'tpope/vim-fugitive',
             },
@@ -294,34 +318,108 @@ local plugins = {
     },
     { -- colors
         { 'folke/tokyonight.nvim', name = 'tokyonight', priority = 1000 },
+        { 'rebelot/kanagawa.nvim', name = 'kanagawa',   priority = 1000 },
         { 'dracula/vim',           name = 'dracula',    priority = 1000 },
         { 'catppuccin/nvim',       name = 'catppuccin', priority = 1000 },
     },
 
 
     ------------------------------------
-    { -- snippets
-        {
-            "L3MON4D3/LuaSnip",
-            version = "v2.*",
-            build = "make install_jsregexp",
-            dependencies = {
-                "rafamadriz/friendly-snippets",
-                "honza/vim-snippets",
-            },
-            config = function()
-                require("luasnip.loaders.from_vscode").lazy_load()
-                require("luasnip.loaders.from_snipmate").lazy_load()
-            end
+    -- { -- snippets
+    -- {
+    -- "L3MON4D3/LuaSnip",
+    -- version = "v2.*",
+    -- build = "make install_jsregexp",
+    -- dependencies = {
+    --     "rafamadriz/friendly-snippets",
+    --     "honza/vim-snippets",
+    -- },
+
+    -- config = function()
+    --     require("luasnip.loaders.from_vscode").lazy_load()
+    --     require("luasnip.loaders.from_snipmate").lazy_load()
+    -- end
+    -- },
+    --     {
+    --         "SirVer/ultisnips",
+    --         dependencies = {
+    --             { name = "ddvim-snippets", dir = '/home/ddcien/WORK/ddvim-snippets' },
+    --         }
+    --     }
+    -- },
+    { "preservim/tagbar" },
+    { "ARM9/arm-syntax-vim" },
+    {
+        "andrewferrier/debugprint.nvim",
+        opts = {},
+        dependencies = {
+            "nvim-telescope/telescope.nvim", -- Optional: If you want to use the :SearchDebugPrints command with telescope.nvim
         },
-        {
-            "SirVer/ultisnips",
-            dependencies = {
-                { name = "ddvim-snippets", dir = '/home/ddcien/WORK/ddvim-snippets' },
-            }
+        lazy = false,                        -- Required to make line highlighting work before debugprint is first used
+        version = "*",                       -- Remove if you DON'T want to use the stable version
+    },
+    -- { 'akinsho/toggleterm.nvim', version = "*", opts = true },
+    {
+        "folke/ts-comments.nvim",
+        opts = {},
+        event = "VeryLazy",
+        enabled = vim.fn.has("nvim-0.10.0") == 1,
+    },
+
+    {
+        'akinsho/toggleterm.nvim',
+        version = "*",
+        config = true
+    },
+
+    {
+        'Civitasv/cmake-tools.nvim',
+        lazy = true,
+        cmd = { 'CMakeGenerate', 'CMakeBuild', 'CMakeSelectCwd' },
+        opts = {
+            cmake_dap_configuration = {
+                name = "cpp",
+                type = "lldb",
+                request = "launch",
+                stopOnEntry = true,
+                runInTerminal = true,
+                console = "integratedTerminal",
+            },
+            cmake_kits_path = "~/.local/share/CMakeTools/cmake-tools-kits.json",
+            cmake_use_scratch_buffer = true
         }
     },
-    { "preservim/tagbar" }
+
+    {
+        'rmagatti/auto-session',
+        lazy = false,
+        ---enables autocomplete for opts
+        ---@module "auto-session"
+        ---@type AutoSession.Config
+        opts = {
+            suppressed_dirs = {
+                '~/',
+                '~/Projects',
+                '~/Downloads',
+                '/',
+                '/tmp/*'
+            },
+            bypass_save_filetypes = {
+                "dashboard",
+                "alpha",
+                "neo-tree",
+                "NvimTree",
+                "lazy",
+                "mason",
+                "startify",
+                "checkhealth",
+                "qf",
+            },
+            auto_restore = false,
+            auto_restore_last_session = false,
+            cwd_change_handling = false,
+        }
+    },
 }
 
 local M = {}

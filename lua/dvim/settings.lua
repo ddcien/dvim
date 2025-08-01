@@ -64,6 +64,7 @@ function M.load_default_options()
 
         mouse = "",
         mousemodel = "extend",
+        -- pumheight = 10,
     }
 
     vim.opt.spelllang:append("cjk")

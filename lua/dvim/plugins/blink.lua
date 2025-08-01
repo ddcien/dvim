@@ -3,8 +3,8 @@ local kind_icons = icons.kind
 
 return {
     'saghen/blink.cmp',
-    enabled = true,
-    version = '*',
+    version = '1.*',
+
     dependencies = {
         'moyiz/blink-emoji.nvim',
         'rafamadriz/friendly-snippets',
@@ -62,25 +62,25 @@ return {
                 -- window = { border = 'single' }
             },
         },
-        signature = {
-            enabled = true,
-            window = { border = 'single' }
-        },
-        keymap = {
-            preset = 'default',
-        },
+        signature = { enabled = true, window = { border = 'single', show_documentation = false, } },
+        keymap = { preset = 'default', },
+
         appearance = {
             use_nvim_cmp_as_default = false,
             nerd_font_variant = 'mono',
             kind_icons = kind_icons,
         },
+
+        cmdline = {
+            enabled = false,
+        },
         sources = {
-            default = { 'lsp', 'snippets', 'path', 'buffer' },
-            -- per_filetype = {
-            --     markdown = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
-            --     gitcommit = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
-            -- },
-            cmdline = {},
+            default = { 'snippets', 'lsp', 'path', 'buffer' },
+            per_filetype = {
+                markdown = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
+                gitcommit = { 'lsp', 'snippets', 'path', 'buffer', 'emoji', },
+            },
+            -- cmdline = {},
             providers = {
                 lsp = {
                     transform_items = function(_, items)
