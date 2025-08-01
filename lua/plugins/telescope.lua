@@ -6,7 +6,10 @@ return {
         event = 'VimEnter',
         dependencies = {
             'nvim-lua/plenary.nvim',
-            { 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' },
+            {
+                'nvim-telescope/telescope-fzf-native.nvim',
+                build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release'
+            },
             'nvim-treesitter/nvim-treesitter',
             'nvim-tree/nvim-web-devicons',
             'nvim-telescope/telescope-ui-select.nvim',
@@ -68,5 +71,4 @@ return {
             })
         end,
     },
-
 }
