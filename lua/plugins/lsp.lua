@@ -1,20 +1,25 @@
 local function config_lsp_mappings()
-    local telescope = require('telescope.builtin')
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('UserLspConfig', {}),
         callback = function(evt)
-            local function _buf_keymap_set(mode, lhs, rhs)
-                vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = evt.buf })
+            local function _buf_keymap_set(mode, lhs, rhs, desc)
+                vim.keymap.set(mode, lhs, rhs, {
+                    noremap = true,
+                    silent = true,
+                    buffer = evt.buf,
+                    desc = desc
+                })
             end
-            vim.bo[evt.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
             _buf_keymap_set('n', '<C-J>', function() vim.diagnostic.jump({ count = 1, float = true }) end)
             _buf_keymap_set('n', '<C-K>', function() vim.diagnostic.jump({ count = -1, float = true }) end)
-            _buf_keymap_set('n', 'K', vim.lsp.buf.hover)
-            _buf_keymap_set('n', 'gD', vim.lsp.buf.declaration)
-            _buf_keymap_set('n', 'gd', telescope.lsp_definitions)
-            _buf_keymap_set('n', 'gt', telescope.lsp_type_definitions)
-            _buf_keymap_set('n', 'gi', telescope.lsp_implementations)
-            _buf_keymap_set('n', 'gr', function() telescope.lsp_references({ include_current_line = true }) end)
+
+            _buf_keymap_set('n', 'gD', Snacks.picker.lsp_declarations, "Goto Declaration")
+            _buf_keymap_set('n', 'gd', Snacks.picker.lsp_definitions, "Goto Definition")
+            _buf_keymap_set('n', 'gt', Snacks.picker.lsp_type_definitions, "Goto T[y]pe Definition")
+            _buf_keymap_set('n', 'gi', Snacks.picker.lsp_implementations, "Goto Implementation")
+            _buf_keymap_set('n', 'gr', Snacks.picker.lsp_references, "Find References")
+
             _buf_keymap_set('n', '<F2>', vim.lsp.buf.rename)
             _buf_keymap_set('i', '<C-K>', vim.lsp.buf.signature_help)
             _buf_keymap_set({ 'n', 'v' }, '<F4>', vim.lsp.buf.code_action)
@@ -42,7 +47,7 @@ return {
         dependencies = {
             'j-hui/fidget.nvim',
             'saghen/blink.cmp',
-            'nvim-telescope/telescope.nvim',
+            'folke/snacks.nvim'
         },
 
         ---@class PluginLspOpts
@@ -128,8 +133,7 @@ return {
 
             for server, config in pairs(opts.servers) do
                 config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
-                vim.lsp.config(server, config)
-                vim.lsp.enable(server)
+                require('lspconfig')[server].setup(config)
             end
         end,
     },
@@ -140,7 +144,6 @@ return {
             'MunifTanjim/nui.nvim',
             'SmiteshP/nvim-navic',
             'numToStr/Comment.nvim',
-            'nvim-telescope/telescope.nvim',
         },
         opts = { lsp = { auto_attach = true } }
     },

@@ -17,7 +17,7 @@ return {
                 'dockerfile', 'gitcommit', 'gitignore', 'json', 'jsonc',
                 'json', 'jsonc', 'lua', 'make', 'markdown', 'markdown_inline',
                 'python', 'query', 'rust', 'verilog', 'vimdoc', 'vim', 'yaml',
-                'gitcommit'
+                'gitcommit', 'regex'
             },
 
             incremental_selection = {

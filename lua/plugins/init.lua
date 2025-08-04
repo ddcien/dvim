@@ -71,7 +71,12 @@ return {
                 console = "integratedTerminal",
             },
             cmake_kits_path = "~/.local/share/CMakeTools/cmake-tools-kits.json",
-            cmake_use_scratch_buffer = true
+            cmake_use_scratch_buffer = true,
+            cmake_generate_options = {
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-DCMAKE_BUILD_TYPE=Release"
+            },
+            build_options = { "-j8" },
         }
     },
 
@@ -156,5 +161,5 @@ return {
             end,
         },
     },
-    {'kevinhwang91/nvim-ufo', dependencies = 'kevinhwang91/promise-async'}
+    { 'kevinhwang91/nvim-ufo', dependencies = 'kevinhwang91/promise-async' },
 }
