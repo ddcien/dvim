@@ -38,12 +38,13 @@ opt.sidescrolloff = 8    -- Columns of context
 opt.ruler = false        -- Disable the default ruler
 --
 opt.fileencodings = "utf-8,gbk"
+opt.foldcolumn = '0'
 opt.foldlevel = 99
 opt.foldlevelstart = 99
+opt.foldenable = true
+
 opt.mousemodel = "extend"
 opt.mouse = ""
-
-
 
 opt.conceallevel = 2 -- Hide * markup for bold and italic, but not markers with substitutions
 opt.confirm = true   -- Confirm to save changes before exiting modified buffer
