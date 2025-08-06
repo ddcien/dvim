@@ -58,29 +58,6 @@ return {
         }
     },
     {
-        'Civitasv/cmake-tools.nvim',
-        lazy = true,
-        cmd = { 'CMakeGenerate', 'CMakeBuild', 'CMakeSelectCwd' },
-        opts = {
-            cmake_dap_configuration = {
-                name = "cpp",
-                type = "lldb",
-                request = "launch",
-                stopOnEntry = true,
-                runInTerminal = true,
-                console = "integratedTerminal",
-            },
-            cmake_kits_path = "~/.local/share/CMakeTools/cmake-tools-kits.json",
-            cmake_use_scratch_buffer = true,
-            cmake_generate_options = {
-                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-                "-DCMAKE_BUILD_TYPE=Release"
-            },
-            build_options = { "-j8" },
-        }
-    },
-
-    {
         'lukas-reineke/indent-blankline.nvim',
         main = 'ibl',
         ---@module 'ibl'
@@ -161,5 +138,37 @@ return {
             end,
         },
     },
-    { 'kevinhwang91/nvim-ufo', dependencies = 'kevinhwang91/promise-async' },
+    {
+        'kevinhwang91/nvim-ufo',
+        dependencies = 'kevinhwang91/promise-async',
+        opts = {
+            fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate)
+                local newVirtText = {}
+                local suffix = (' 󰁂 %d '):format(endLnum - lnum)
+                local sufWidth = vim.fn.strdisplaywidth(suffix)
+                local targetWidth = width - sufWidth
+                local curWidth = 0
+                for _, chunk in ipairs(virtText) do
+                    local chunkText = chunk[1]
+                    local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                    if targetWidth > curWidth + chunkWidth then
+                        table.insert(newVirtText, chunk)
+                    else
+                        chunkText = truncate(chunkText, targetWidth - curWidth)
+                        local hlGroup = chunk[2]
+                        table.insert(newVirtText, { chunkText, hlGroup })
+                        chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                        -- str width returned from truncate() may less than 2nd argument, need padding
+                        if curWidth + chunkWidth < targetWidth then
+                            suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+                        end
+                        break
+                    end
+                    curWidth = curWidth + chunkWidth
+                end
+                table.insert(newVirtText, { suffix, 'MoreMsg' })
+                return newVirtText
+            end
+        },
+    },
 }

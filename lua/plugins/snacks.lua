@@ -5,6 +5,7 @@ return {
     opts = {
         bigfile = {},
         picker = {},
+        input = {},
     },
     keys = {
         { "<c-p>", function() Snacks.picker.files() end, desc = "Find Files" },
