@@ -4,11 +4,15 @@ return {
     priority = 1000,
     opts = {
         bigfile = {},
-        picker = {},
+        picker = {
+            lsp_references = {
+                include_current = true,
+            },
+        },
         input = {},
     },
     keys = {
-        { "<c-p>", function() Snacks.picker.files() end, desc = "Find Files" },
+        { "<c-p>", function() require("snacks").picker.files() end, desc = "Find Files" },
         -- { "<leader><space>", function() Snacks.picker.smart() end,                                   desc = "Smart Find Files" },
         -- { "<leader>fc",      function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
         -- { "<leader>ff",      function() Snacks.picker.files() end,                                   desc = "Find Files" },
@@ -16,5 +20,4 @@ return {
         -- { "<leader>fp",      function() Snacks.picker.projects() end,                                desc = "Projects" },
         -- { "<leader>fr",      function() Snacks.picker.recent() end,                                  desc = "Recent" },
     },
-
 }

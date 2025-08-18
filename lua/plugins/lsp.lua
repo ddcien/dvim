@@ -10,18 +10,27 @@ local function config_lsp_mappings()
                     desc = desc
                 })
             end
-
             _buf_keymap_set('n', '<C-J>', function() vim.diagnostic.jump({ count = 1, float = true }) end)
             _buf_keymap_set('n', '<C-K>', function() vim.diagnostic.jump({ count = -1, float = true }) end)
 
-            _buf_keymap_set('n', 'gD', Snacks.picker.lsp_declarations, "Goto Declaration")
-            _buf_keymap_set('n', 'gd', Snacks.picker.lsp_definitions, "Goto Definition")
-            _buf_keymap_set('n', 'gt', Snacks.picker.lsp_type_definitions, "Goto T[y]pe Definition")
-            _buf_keymap_set('n', 'gi', Snacks.picker.lsp_implementations, "Goto Implementation")
-            _buf_keymap_set('n', 'gr', Snacks.picker.lsp_references, "Find References")
+            local snacks = require("snacks")
+            _buf_keymap_set('n', 'gD',
+                function() snacks.picker.lsp_declarations({ include_current = true }) end,
+                "Goto Declaration")
+            _buf_keymap_set('n', 'gd',
+                function() snacks.picker.lsp_definitions({ include_current = true }) end,
+                "Goto Definition")
+            _buf_keymap_set('n', 'gt',
+                function() snacks.picker.lsp_type_definitions({ include_current = true }) end,
+                "Goto T[y]pe Definition")
+            _buf_keymap_set('n', 'gi',
+                function() snacks.picker.lsp_implementations({ include_current = true }) end,
+                "Goto Implementation")
+            _buf_keymap_set('n', 'gr',
+                function() snacks.picker.lsp_references({ include_current = true }) end,
+                "Find References")
 
             _buf_keymap_set('n', '<F2>', vim.lsp.buf.rename)
-            _buf_keymap_set('i', '<C-K>', vim.lsp.buf.signature_help)
             _buf_keymap_set({ 'n', 'v' }, '<F4>', vim.lsp.buf.code_action)
             _buf_keymap_set({ 'n', 'v' }, 'gf',
                 function()
@@ -31,10 +40,32 @@ local function config_lsp_mappings()
 
             local client = vim.lsp.get_client_by_id(evt.data.client_id)
             if client and client.server_capabilities.documentHighlightProvider then
-                vim.api.nvim_create_autocmd('CursorHold',
-                    { buffer = evt.buf, callback = vim.lsp.buf.document_highlight })
-                vim.api.nvim_create_autocmd('CursorMoved',
-                    { buffer = evt.buf, callback = vim.lsp.buf.clear_references })
+                local is_in_mark = function()
+                    local reference_ns = vim.api.nvim_create_namespace('nvim.lsp.references')
+                    local cursor = vim.api.nvim_win_get_cursor(0)
+                    cursor[1] = cursor[1] - 1
+                    local marks = vim.api.nvim_buf_get_extmarks(0, reference_ns, cursor, { 0, 0 },
+                        { limit = 1, details = true })
+
+                    local is_in_range = function(mark)
+                        local start_ = mark[2] * 0x10000 + mark[3]
+                        local end_ = mark[4].end_row * 0x10000 + mark[4].end_col
+                        local cursor_ = cursor[1] * 0x10000 + cursor[2]
+                        return start_ <= cursor_ and cursor_ < end_
+                    end
+                    return #marks > 0 and is_in_range(marks[1])
+                end
+
+                vim.api.nvim_create_autocmd('CursorHold', {
+                    buffer = evt.buf,
+                    callback = function()
+                        if is_in_mark() then
+                            return
+                        end
+                        vim.lsp.buf.clear_references()
+                        vim.lsp.buf.document_highlight()
+                    end
+                })
             end
         end,
     })
