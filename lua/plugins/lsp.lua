@@ -72,7 +72,6 @@ local function config_lsp_mappings()
 end
 
 return {
-    { 'j-hui/fidget.nvim', opts = {}, },
     {
         'neovim/nvim-lspconfig',
         dependencies = {
@@ -113,7 +112,6 @@ return {
             codelens = {
                 enabled = false,
             },
-
             capabilities = {
                 offsetEncoding = { 'utf-16' },
                 workspace = {
@@ -130,19 +128,19 @@ return {
 
             ---@type lspconfigoptions
             servers = {
-                clangd = {},
-                basedpyright = {},
-                ruff = {},
-                rust_analyzer = {},
-                neocmake = {}, -- 'cmake'
-                lua_ls = {},   -- 'lua'
-                marksman = {}, -- 'markdown'
-                vimls = {},    -- 'vim',
-                verible = {},  -- 'verilog'
-                dts_lsp = {},  -- 'devicetree
-                bashls = {},
-                -- looklsp = {},
+                -- clangd = {},
+                basedpyright = {}, -- 'python': pip3 install --user --upgrade basedpyright
+                ruff = {},         -- 'python': pip3 install --user --upgrade ruff
+                bashls = {},       -- 'bash': npm i -g bash-language-server
+                -- neocmake = {},     -- 'cmake'
+                lua_ls = {},       -- 'lua'
+                marksman = {},     -- 'markdown'
+                dts_lsp = {},      -- 'devicetree':
+                -- rust_analyzer = {},
+                -- vimls = {},    -- 'vim',
+                -- verible = {},  -- 'verilog'
             },
+
             -- you can do any additional lsp server setup here
             -- return true if you don't want this server to be setup with lspconfig
             ---@type table<string, fun(server:string, opts:_lspconfig.options):boolean?>
@@ -160,12 +158,32 @@ return {
         ---@param opts PluginLspOpts
         config = function(_, opts)
             vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
+
             config_lsp_mappings()
 
-            for server, config in pairs(opts.servers) do
-                config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
-                require('lspconfig')[server].setup(config)
-            end
+            -- for server, config in pairs(opts.servers) do
+            --     config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
+                -- require('lspconfig')[server].setup(config)
+            -- end
+
+            vim.lsp.enable('basedpyright')
+            vim.lsp.enable('ruff')
+            vim.lsp.enable('bashls')
+            vim.lsp.enable('clangd')
+            vim.lsp.enable('marksman')
+            vim.lsp.enable('dts_lsp')
+            vim.lsp.enable('lua_ls')
+            vim.lsp.enable('neocmake')
+            vim.lsp.enable('lookls')
+                --
+                -- -- neocmake = {},     -- 'cmake'
+                -- lua_ls = {},       -- 'lua'
+                -- marksman = {},     -- 'markdown'
+                -- dts_lsp = {},      -- 'devicetree':
+                -- rust_analyzer = {},
+                -- vimls = {},    -- 'vim',
+                -- verible = {},  -- 'verilog'
+            -- vim.lsp.enable('marksman')
         end,
     },
     {
@@ -178,4 +196,5 @@ return {
         },
         opts = { lsp = { auto_attach = true } }
     },
+    { 'j-hui/fidget.nvim', opts = {}, },
 }

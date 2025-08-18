@@ -25,8 +25,6 @@ return {
                 use_nvim_cmp_as_default = false,
                 nerd_font_variant = "mono",
             },
-
-
             completion = {
                 keyword = {
                     range = 'prefix', -- 'prefix' or 'full'
@@ -82,11 +80,13 @@ return {
                     enabled = false,
                 },
             },
-
-            -- experimental signature help support
-            -- signature = { enabled = true },
-            signature = { enabled = true, window = { border = 'single', show_documentation = false, } },
-
+            signature = {
+                enabled = true,
+                window = {
+                    border = 'single',
+                    show_documentation = false,
+                },
+            },
             sources = {
                 default = { "lsp", "path", "snippets", "buffer" },
             },
