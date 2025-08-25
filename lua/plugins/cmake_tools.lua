@@ -15,10 +15,6 @@ return {
         },
         cmake_kits_path = "~/.local/share/CMakeTools/cmake-tools-kits.json",
         cmake_use_scratch_buffer = true,
-        cmake_generate_options = {
-            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-            "-DCMAKE_BUILD_TYPE=Release"
-        },
         build_options = { "-j8" },
     },
 }

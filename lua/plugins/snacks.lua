@@ -3,13 +3,19 @@ return {
     lazy = false,
     priority = 1000,
     opts = {
-        bigfile = {},
-        picker = {
-            lsp_references = {
-                include_current = true,
-            },
-        },
-        input = {},
+        picker = { enabled = true },
+        bigfile = { enabled = true },
+
+        -- dashboard = { enabled = true }, -- goolord/alpha-nvim
+        -- explorer = { enabled = true },  -- nvim-tree/nvim-tree.lua
+        indent = { enabled = true },   -- lukas-reineke/indent-blankline.nvim
+        input = { enabled = true },    -- Better vim.ui.input
+        -- notifier = { enabled = true }, -- Pretty vim.notify
+        quickfile = { enabled = true },
+        scope = { enabled = true },
+        -- scroll = { enabled = true },
+        -- statuscolumn = { enabled = true },
+        -- words = { enabled = true },
     },
     keys = {
         { "<c-p>", function() require("snacks").picker.files() end, desc = "Find Files" },

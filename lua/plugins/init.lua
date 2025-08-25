@@ -1,15 +1,3 @@
-if vim.fn.has("nvim-0.9.0") == 0 then
-    vim.api.nvim_echo({
-        { "Requires Neovim >= 0.9.0\n", "ErrorMsg" },
-        { "Press any key to exit",      "MoreMsg" },
-    }, true, {})
-    vim.fn.getchar()
-    vim.cmd([[quit]])
-    return {}
-end
-
--- require("dvim.config").init()
-
 return {
     { "folke/lazy.nvim",             version = "*" },
     { "nvim-tree/nvim-web-devicons", opts = {} },
@@ -57,17 +45,17 @@ return {
             cwd_change_handling = false,
         }
     },
-    {
-        'lukas-reineke/indent-blankline.nvim',
-        main = 'ibl',
-        ---@module 'ibl'
-        ---@type ibl.config
-        opts = {
-            exclude = {
-                filetypes = { "dashboard", "alpha", "neo-tree", "NvimTree", "lazy", "mason", "startify" },
-            },
-        },
-    },
+    -- {
+    --     'lukas-reineke/indent-blankline.nvim',
+    --     main = 'ibl',
+    --     ---@module 'ibl'
+    --     ---@type ibl.config
+    --     opts = {
+    --         exclude = {
+    --             filetypes = { "dashboard", "alpha", "neo-tree", "NvimTree", "lazy", "mason", "startify" },
+    --         },
+    --     },
+    -- },
     { -- markdown
         {
             'iamcco/markdown-preview.nvim',

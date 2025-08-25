@@ -72,6 +72,8 @@ opt.undolevels = 10000
 opt.virtualedit = "block" -- Allow cursor to move where there is no text in visual block mode
 opt.winminwidth = 5       -- Minimum window width
 opt.wrap = false          -- Disable line wrap
+opt.winborder = 'rounded'
+opt.textwidth = 80
 
 opt.smoothscroll = true
 
